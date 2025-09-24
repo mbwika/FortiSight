@@ -3,10 +3,10 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Award, Users, Target, Zap } from "lucide-react";
 
 const stats = [
-  { icon: Users, label: "Clients Served", value: "500+" },
-  { icon: Award, label: "Years Experience", value: "15+" },
+  { icon: Users, label: "Clients Served", value: "100+" },
+  { icon: Award, label: "Years Experience", value: "9+" },
   { icon: Target, label: "Success Rate", value: "99%" },
-  { icon: Zap, label: "Projects Delivered", value: "1000+" }
+  { icon: Zap, label: "Projects Delivered", value: "500+" }
 ];
 
 export function About() {
@@ -72,8 +72,8 @@ export function About() {
           <div className="relative">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1758518731706-be5d5230e5a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMHRlYW0lMjBtZWV0aW5nfGVufDF8fHx8MTc1ODUzMzg5M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                alt="Professional business team meeting"
+                src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                alt="Digital vision and clarity for business future"
                 className="w-full h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>

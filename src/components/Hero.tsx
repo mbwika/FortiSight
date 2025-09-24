@@ -76,8 +76,8 @@ export function Hero() {
           }`}>
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1748346918817-0b1b6b2f9bab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB0ZWNobm9sb2d5JTIwY29uc3VsdGluZ3xlbnwxfHx8fDE3NTg1OTQ1OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                alt="Modern IT consulting office"
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                alt="Strategic IT consulting and modern technology solutions"
                 className="w-full h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>

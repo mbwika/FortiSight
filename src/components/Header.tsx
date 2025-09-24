@@ -2,6 +2,7 @@ import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo, LogoCompact } from "./Logo";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,17 +47,22 @@ export function Header() {
           <button onClick={() => scrollToSection('contact')} className="hover:text-primary transition-colors">Contact</button>
         </nav>
 
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-6">
+          <ThemeToggle />
+          </div>
+          <div className="hidden md:flex items-center space-x-4">
           <Button variant="outline" onClick={() => scrollToSection('contact')}>Get Quote</Button>
           <Button onClick={() => scrollToSection('contact')}>Contact Us</Button>
         </div>
 
-        <button 
-          className="md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="md:hidden flex items-center space-x-2">
+          <ThemeToggle />
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {isMenuOpen && (
@@ -65,7 +71,7 @@ export function Header() {
             <button onClick={() => scrollToSection('home')} className="hover:text-primary transition-colors text-left">Home</button>
             <button onClick={() => scrollToSection('services')} className="hover:text-primary transition-colors text-left">Services</button>
             <button onClick={() => scrollToSection('about')} className="hover:text-primary transition-colors text-left">About</button>
-            <button onClick={() => scrollToSection('team')} className="hover:text-primary transition-colors text-left">Team</button>
+            {/* <button onClick={() => scrollToSection('team')} className="hover:text-primary transition-colors text-left">Team</button> */}
             <button onClick={() => scrollToSection('contact')} className="hover:text-primary transition-colors text-left">Contact</button>
             <div className="flex flex-col space-y-2 pt-4">
               <Button variant="outline" onClick={() => scrollToSection('contact')}>Get Quote</Button>
