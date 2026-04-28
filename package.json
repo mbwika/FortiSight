@@ -1,6 +1,7 @@
 {
-      "name": "Code & Security Consulting",
+      "name": "code-and-security-consulting",
       "version": "0.1.0",
+      "type": "module",
       "private": true,
       "dependencies": {
             "@emailjs/browser": "^4.4.1",
