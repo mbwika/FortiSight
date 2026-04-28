@@ -319,7 +319,7 @@ export function Contact() {
                         required
                       />
                       <label htmlFor="privacy" className="text-sm text-muted-foreground">
-                        I agree to the privacy policy and terms of service. *
+                        I agree to the privacy policy and terms of service.
                       </label>
                     </div>
 
