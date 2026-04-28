@@ -4,12 +4,12 @@ import { Logo } from "./Logo";
 
 const footerLinks = {
   Services: [
-    "Cloud Migration & Digital Transformation",
-    "Cybersecurity",
-    "AI & Machine Learning",
-    "Data Analytics",
-    "Software Development",
-    "IT Consulting"
+    "Security Assessment",
+    "Email Protection Setup",
+    "Website Security Hardening",
+    "Domain & DNS Security",
+    "Security Awareness Training",
+    "Incident Response Support"
   ],
   Company: [
     "About Us",
@@ -37,9 +37,8 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Logo />
             <p className="text-muted-foreground leading-relaxed max-w-md">
-              FortiSight Consulting provides strategic IT consulting, software development, 
-              and comprehensive technology solutions. We help businesses gain clarity and 
-              foresight in their digital transformation journey since 2016.
+              Code & Security provides practical cybersecurity checks and solutions for small businesses. 
+              We identify and fix common security risks without unnecessary complexity, helping you protect your business from cyber threats.
             </p>
             <div className="flex space-x-4">
               <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
@@ -80,7 +79,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © 2025 FortiSight Consulting. All rights reserved.
+            © 2026 Code & Security Consulting. All rights reserved.
           </div>
           <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>

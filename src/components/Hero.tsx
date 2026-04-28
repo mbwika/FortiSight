@@ -33,40 +33,39 @@ export function Hero() {
           }`}>
             <div className="space-y-4">
               <div className="inline-flex items-center px-4 py-2 bg-secondary rounded-full">
-                <span className="text-sm text-secondary-foreground"> Strategic IT Consulting</span>
+                <span className="text-sm text-secondary-foreground"> Cybersecurity for Small Businesses</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Empower Your Business with
-                <span className="text-primary block">Strategic IT Vision</span>
+                Cybersecurity Risk Checks for
+                <span className="text-primary block">Modern Businesses</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
-                FortiSight Consulting delivers comprehensive IT solutions, from cybersecurity to 
-                AI, helping you navigate the digital landscape with confidence and foresight.
+                Know what hackers can see about your business—before they do. We help small businesses identify and fix common security risks in their websites, domains, and email systems. Clear findings and practical fixes without Jargon.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="group" onClick={scrollToContact}>
-                Get Started Today
+                Get a Free Security Assessment
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button variant="outline" size="lg" onClick={scrollToServices}>
-                View Our Work
+                Learn More
               </Button>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6 pt-4">
               <div className="flex items-center space-x-2">
                 <Check className="h-5 w-5 text-green-500" />
-                <span className="text-sm">Strategic IT Planning</span>
+                <span className="text-sm">Clear Security Reports</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Check className="h-5 w-5 text-green-500" />
-                <span className="text-sm">Expert Development Team</span>
+                <span className="text-sm">Step-by-Step Fixes</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Check className="h-5 w-5 text-green-500" />
-                <span className="text-sm">Future-Ready Solutions</span>
+                <span className="text-sm">No Technical Jargon</span>
               </div>
             </div>
           </div>
@@ -76,8 +75,8 @@ export function Hero() {
           }`}>
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
-                alt="Strategic IT consulting and modern technology solutions"
+                src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                alt="Cybersecurity protection and digital security for small businesses"
                 className="w-full h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
@@ -85,13 +84,13 @@ export function Hero() {
             
             {/* Floating stats cards */}
             <div className="absolute -bottom-6 -left-6 bg-background rounded-xl shadow-lg p-4 border">
-              <div className="text-2xl font-bold text-primary">500+</div>
-              <div className="text-sm text-muted-foreground">Projects Completed</div>
+              <div className="text-2xl font-bold text-primary">100+</div>
+              <div className="text-sm text-muted-foreground">Clients Defended</div>
             </div>
             
             <div className="absolute -top-6 -right-6 bg-background rounded-xl shadow-lg p-4 border">
-              <div className="text-2xl font-bold text-primary">99.9%</div>
-              <div className="text-sm text-muted-foreground">Uptime Guarantee</div>
+              <div className="text-2xl font-bold text-primary">99%</div>
+              <div className="text-sm text-muted-foreground">Success Rate</div>
             </div>
           </div>
         </div>

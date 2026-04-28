@@ -1,0 +1,10 @@
+{
+    "terminal.integrated.profiles.windows": {
+        "Ubuntu": {
+            "path": "C:\\Windows\\System32\\wsl.exe",
+            "args": []
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "Ubuntu",
+    "terminal.integrated.defaultProfile.linux": "bash"
+}

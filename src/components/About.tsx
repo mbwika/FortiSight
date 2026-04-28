@@ -3,10 +3,10 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Award, Users, Target, Zap } from "lucide-react";
 
 const stats = [
-  { icon: Users, label: "Clients Served", value: "100+" },
+  { icon: Users, label: "Clients Protected", value: "100+" },
   { icon: Award, label: "Years Experience", value: "9+" },
   { icon: Target, label: "Success Rate", value: "99%" },
-  { icon: Zap, label: "Projects Delivered", value: "500+" }
+  { icon: Zap, label: "Security Checks", value: "500+" }
 ];
 
 export function About() {
@@ -20,13 +20,11 @@ export function About() {
                 <span className="text-sm text-primary">About Us</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold">
-                Clarity and Vision for 
-                <span className="text-primary block">Your Digital Future</span>
+                Practical Cybersecurity for
+                <span className="text-primary block">Modern Businesses</span>
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                FortiSight Consulting provides strategic IT guidance with 
-                unparalleled clarity and foresight. We help businesses see beyond today's challenges 
-                to build tomorrow's solutions with confidence and precision.
+                We specialize in identifying real-world risks that affect modern businesses — and help fix them without unnecessary complexity.
               </p>
             </div>
 
@@ -34,24 +32,24 @@ export function About() {
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <h4 className="font-semibold">Industry Expertise</h4>
-                  <p className="text-muted-foreground">Deep knowledge across healthcare, finance, retail, and manufacturing sectors.</p>
+                  <h4 className="font-semibold">Practical Risk Identification</h4>
+                  <p className="text-muted-foreground">We focus on real-world security issues that actually affect modern businesses.</p>
                 </div>
               </div>
               
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <h4 className="font-semibold">Strategic Foresight</h4>
-                  <p className="text-muted-foreground">We anticipate future trends and help you prepare with forward-thinking technology strategies.</p>
+                  <h4 className="font-semibold">Clear Communication</h4>
+                  <p className="text-muted-foreground">No jargon—just straightforward explanations and actionable recommendations.</p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <h4 className="font-semibold">Client-Centric Approach</h4>
-                  <p className="text-muted-foreground">Every solution is tailored to meet your unique business requirements and goals.</p>
+                  <h4 className="font-semibold">Actionable Solutions</h4>
+                  <p className="text-muted-foreground">We provide step-by-step fixes that you can implement quickly and effectively.</p>
                 </div>
               </div>
             </div>
@@ -72,8 +70,8 @@ export function About() {
           <div className="relative">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
-                alt="Digital vision and clarity for business future"
+                src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                alt="Cybersecurity protection and practical security solutions"
                 className="w-full h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
@@ -83,7 +81,7 @@ export function About() {
             <div className="absolute bottom-8 left-8 right-8 bg-background/95 backdrop-blur-sm rounded-lg p-6 border">
               <h4 className="font-semibold mb-2">Our Mission</h4>
               <p className="text-sm text-muted-foreground">
-                To provide businesses with the clarity and foresight needed to navigate the digital landscape and achieve sustainable technological excellence.
+                To help small businesses identify and fix common security risks without unnecessary complexity.
               </p>
             </div>
           </div>

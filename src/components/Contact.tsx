@@ -12,7 +12,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    details: "info@codensecurity.com",
+    details: "consulting@codensecurity.com",
     description: "Send us an email anytime"
   },
   // {
@@ -88,7 +88,7 @@ export function Contact() {
 
       if (serviceID && templateID && publicKey) {
         const templateParams = {
-          to_email: 'info@codensecurity.com',
+          to_email: 'consulting@codensecurity.com',
           from_name: `${formData.firstName} ${formData.lastName}`,
           from_email: formData.email,
           phone: formData.phone || 'Not provided',
@@ -191,11 +191,11 @@ export function Contact() {
             <span className="text-sm text-primary">Contact Us</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold">
-            Ready to Transform Your Business?
+            Ready to Secure Your Business?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Get in touch with our experts to discuss your IT needs and discover how 
-            we can help accelerate your digital transformation journey.
+            Get in touch with our experts to discuss your Cybersecurity needs and discover how 
+            we can help mitigate security risks for your business.
           </p>
         </div>
 
@@ -284,13 +284,12 @@ export function Contact() {
                             <SelectValue placeholder="Select a service" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="cloud">Cloud Migration</SelectItem>
-                            <SelectItem value="security">Cybersecurity</SelectItem>
-                            <SelectItem value="ai">AI & Machine Learning</SelectItem>
-                            <SelectItem value="analytics">Data Analytics</SelectItem>
-                            <SelectItem value="software">Software Development</SelectItem>
-                            <SelectItem value="digital">Digital Transformation</SelectItem>
-                            <SelectItem value="consulting">IT Consulting</SelectItem>
+                            <SelectItem value="assessment">Security Assessment</SelectItem>
+                            <SelectItem value="email">Email Protection Setup</SelectItem>
+                            <SelectItem value="website">Website Security Hardening</SelectItem>
+                            <SelectItem value="domain">Domain & DNS Security</SelectItem>
+                            <SelectItem value="training">Security Awareness Training</SelectItem>
+                            <SelectItem value="incident">Incident Response Support</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -302,7 +301,7 @@ export function Contact() {
                       </label>
                       <Textarea 
                         id="message" 
-                        placeholder="Tell us about your project requirements..."
+                        placeholder="Tell us about your cybersecurity needs..."
                         rows={4}
                         value={formData.message}
                         onChange={handleInputChange}
@@ -357,7 +356,7 @@ export function Contact() {
             <Card className="p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-2">Get a Free Consultation</h3>
               <p className="text-sm mb-4 opacity-90">
-                Schedule a 30-minute call with our experts to discuss your IT challenges and opportunities.
+                Schedule a 30-minute call with our experts to discuss your Cybersecurity challenges.
               </p>
               <Button 
                 variant="secondary" 
