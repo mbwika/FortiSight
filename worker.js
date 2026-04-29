@@ -1,36 +1,40 @@
 async function handlePostRequest(request, env) {
-  const body = await request.formData();
+  // Try to get the token regardless of content-type
+  let token = "";
+  let body;
+  const contentType = request.headers.get("content-type") || "";
 
-  // Turnstile post parameter name is 'cf-turnstile-response'
-  const token = body.get('cf-turnstile-response');
+  if (contentType.includes("form")) {
+    body = await request.formData();
+    token = body.get('cf-turnstile-response');
+  } else {
+    const json = await request.json();
+    body = json;
+    token = json['cf-turnstile-response'];
+  }
+
   const ip = request.headers.get('CF-Connecting-IP');
 
-  // Validate the token by calling the Cloudflare API
-  const verificationBody = `secret=${encodeURIComponent(env.TURNSTILE_SECRET_KEY)}&response=${encodeURIComponent(token)}&remoteip=${encodeURIComponent(ip || '')}`;
-
-  const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-  const result = await fetch(url, {
+  // Validate with Cloudflare
+  const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: verificationBody,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}&remoteip=${ip}`
   });
 
-  const outcome = await result.json();
-
-  if (!outcome.success || outcome.action !== 'contact' || outcome.hostname !== 'codensecurity.com') {
-    return new Response('The CAPTCHA check failed or was invalid.', { status: 403 });
+  const outcome = await idResp.json();
+  if (!outcome.success) {
+     return new Response(`CAPTCHA Validation failed: ${outcome['error-codes']}`, { status: 403 });
   }
 
   // Extract form data
-  const firstName = body.get('firstName');
-  const lastName = body.get('lastName');
-  const email = body.get('email');
-  const phone = body.get('phone');
-  const company = body.get('company');
-  const service = body.get('service');
-  const message = body.get('message');
+  const firstName = body.get ? body.get('firstName') : body.firstName;
+  const lastName = body.get ? body.get('lastName') : body.lastName;
+  const email = body.get ? body.get('email') : body.email;
+  const phone = body.get ? body.get('phone') : body.phone;
+  const company = body.get ? body.get('company') : body.company;
+  const service = body.get ? body.get('service') : body.service;
+  const message = body.get ? body.get('message') : body.message;
 
   // Send email using a service like SendGrid, Mailgun, or Resend
   // For this example, we'll use a simple fetch to a email service
