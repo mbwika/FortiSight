@@ -16,11 +16,17 @@ async function handlePostRequest(request, env) {
   const ip = request.headers.get('CF-Connecting-IP');
 
   // Validate with Cloudflare
+  // const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  //   body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}&remoteip=${ip}`
+  // });
+
   const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}&remoteip=${ip}`
-  });
+    body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}`
+});
 
   const outcome = await idResp.json();
   if (!outcome.success) {
@@ -67,7 +73,8 @@ async function handlePostRequest(request, env) {
     },
     body: JSON.stringify({
       from: 'Code & Security Consulting <consulting@codensecurity.com>',
-      to: emailData.to,
+      to: ["consulting@codensecurity.com"],
+      reply_to: emailData.email,
       subject: emailData.subject,
       html: emailData.html,
       reply_to: emailData.replyTo
