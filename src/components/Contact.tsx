@@ -49,7 +49,7 @@ export function Contact() {
     setFormData(prev => ({ ...prev, service: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.message || !formData.privacy) {
@@ -57,9 +57,11 @@ export function Contact() {
       return;
     }
 
-    // Get the Turnstile token directly from the widget
-    const turnstileToken = (window as any).turnstile?.getResponse();
-    if (!turnstileToken) {
+    const formElement = e.currentTarget;
+    const formDataToSend = new FormData(formElement);
+    const token = formDataToSend.get('cf-turnstile-response');
+
+    if (!token) {
       toast.error('Please complete the CAPTCHA verification.');
       return;
     }
@@ -68,16 +70,6 @@ export function Contact() {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('firstName', formData.firstName);
-      formDataToSend.append('lastName', formData.lastName);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('phone', formData.phone);
-      formDataToSend.append('company', formData.company);
-      formDataToSend.append('service', formData.service);
-      formDataToSend.append('message', formData.message);
-      formDataToSend.append('cf-turnstile-response', turnstileToken);
-
       const response = await fetch('https://codensecurity.com/api/contact', { // Worker endpoint
         method: 'POST',
         body: formDataToSend,
