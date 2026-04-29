@@ -1,4 +1,4 @@
-name = "codensecurity-contact-worker"
+name = "codensecurity"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
