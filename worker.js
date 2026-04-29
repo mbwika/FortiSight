@@ -1,4 +1,4 @@
-async function handlePostRequest(request) {
+async function handlePostRequest(request, env) {
   const body = await request.formData();
 
   // Turnstile post parameter name is 'cf-turnstile-response'
@@ -38,9 +38,9 @@ async function handlePostRequest(request) {
 
   const emailData = {
     to: 'consulting@codensecurity.com',
-    subject: `New Contact Form Submission from ${firstName} ${lastName}`,
+    subject: `Code & Security Consulting Email from ${firstName} ${lastName}`,
     html: `
-      <h3>New Contact Form Submission</h3>
+      <h3>Message</h3>
       <p><strong>Name:</strong> ${firstName} ${lastName}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
@@ -49,7 +49,7 @@ async function handlePostRequest(request) {
       <h4>Message:</h4>
       <p>${message.replace(/\n/g, '<br>')}</p>
       <hr>
-      <p><em>This message was sent from the FortiSight contact form.</em></p>
+      <p><em>This message was sent from the Code & Security Consulting contact form.</em></p>
     `,
     replyTo: email
   };
@@ -80,11 +80,25 @@ async function handlePostRequest(request) {
 
 export default {
   async fetch(request, env, ctx) {
-    if (request.method === 'POST') {
-      return handlePostRequest(request);
+    const url = new URL(request.url);
+
+    if (url.pathname === '/api/contact') {
+      if (request.method === 'POST') {
+        return handlePostRequest(request, env);
+      }
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          status: 204,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+          }
+        });
+      }
+      return new Response('Method not allowed', { status: 405 });
     }
 
-    // Handle other requests (e.g., serve the static site)
-    return new Response('Method not allowed', { status: 405 });
+    return fetch(request);
   }
 };
