@@ -19,12 +19,8 @@ async function handlePostRequest(request, env) {
 
   const outcome = await result.json();
 
-  if (!outcome.success) {
-    return new Response('The CAPTCHA check failed. Please try again.', { status: 403 });
-  }
-
-  if (outcome.action !== 'contact') {
-    return new Response('Invalid CAPTCHA action.', { status: 403 });
+  if (!outcome.success || outcome.action !== 'contact' || outcome.hostname !== 'codensecurity.com') {
+    return new Response('The CAPTCHA check failed or was invalid.', { status: 403 });
   }
 
   // Extract form data
