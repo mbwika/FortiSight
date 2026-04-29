@@ -7,7 +7,6 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { useForm, ValidationError } from "@formspree/react";
 
 const contactInfo = [
   {
@@ -25,7 +24,6 @@ const contactInfo = [
 ];
 
 export function Contact() {
-  const [state, handleFormSubmit] = useForm("xojygrdq");
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,22 +34,17 @@ export function Contact() {
     message: '',
     privacy: false
   });
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
   useEffect(() => {
-    if (state.succeeded) {
-      toast.success('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.');
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: '',
-        privacy: false
-      });
-    }
-  }, [state.succeeded]);
+    // Define the global callback for Turnstile
+    (window as any).onSuccess = onTurnstileSuccess;
+    return () => {
+      delete (window as any).onSuccess;
+    };
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value, type } = e.target;
@@ -66,13 +59,64 @@ export function Contact() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.message || !formData.privacy) {
-      e.preventDefault();
       toast.error('Please fill in all required fields and accept the privacy policy.');
       return;
     }
 
-    await handleFormSubmit(e);
+    if (!turnstileToken) {
+      toast.error('Please complete the CAPTCHA verification.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: '' });
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('firstName', formData.firstName);
+      formDataToSend.append('lastName', formData.lastName);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('company', formData.company);
+      formDataToSend.append('service', formData.service);
+      formDataToSend.append('message', formData.message);
+      formDataToSend.append('cf-turnstile-response', turnstileToken);
+
+      const response = await fetch('https://codensecurity.com/api/contact', { // Worker endpoint
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (response.ok) {
+        setSubmitStatus({ type: 'success', message: 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.' });
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          company: '',
+          service: '',
+          message: '',
+          privacy: false
+        });
+        setTurnstileToken('');
+      } else {
+        const errorMessage = await response.text();
+        setSubmitStatus({ type: 'error', message: errorMessage || 'Failed to send message. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onTurnstileSuccess = (token: string) => {
+    setTurnstileToken(token);
   };
 
   return (
@@ -99,25 +143,13 @@ export function Contact() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <form onSubmit={handleSubmit}>
-                  {state.succeeded && (
-                    <Alert className="border-green-200 bg-green-50 text-green-900">
-                      <AlertTitle>Message sent</AlertTitle>
-                      <AlertDescription>
-                        Your message has been submitted successfully. We will review it and respond as soon as possible.
-                      </AlertDescription>
+                  {submitStatus.type && (
+                    <Alert variant={submitStatus.type === 'error' ? 'destructive' : 'default'}>
+                      <AlertTitle>{submitStatus.type === 'success' ? 'Message sent' : 'Submission failed'}</AlertTitle>
+                      <AlertDescription>{submitStatus.message}</AlertDescription>
                     </Alert>
                   )}
 
-                  {state.errors && state.errors.length > 0 && (
-                    <Alert variant="destructive">
-                      <AlertTitle>Submission failed</AlertTitle>
-                      <AlertDescription>
-                        Please correct any errors below and try again.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  <ValidationError errors={state.errors} />
                   <div className="space-y-6">
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -242,13 +274,24 @@ export function Contact() {
                         </label>
                       </div>
 
+                      <div className="space-y-2">
+                        <div
+                          className="cf-turnstile"
+                          data-sitekey="0x4AAAAAADFj512HLSo6yLMY"
+                          data-theme="light"
+                          data-size="normal"
+                          data-callback="onSuccess"
+                        ></div>
+                        <input type="hidden" name="cf-turnstile-response" value={turnstileToken} />
+                      </div>
+
                       <Button 
                         type="submit" 
                         size="lg" 
                         className="w-full md:w-auto" 
-                        disabled={state.submitting}
+                        disabled={isSubmitting}
                       >
-                        {state.submitting ? 'Sending...' : 'Send Message'}
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
                       </Button>
                     </div>
                   </form>

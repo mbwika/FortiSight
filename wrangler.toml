@@ -1,0 +1,15 @@
+name = "codensecurity-contact-worker"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# Add any environment variables here if needed
+
+# For email service API keys, use secrets instead
+# wrangler secret put RESEND_API_KEY
+# wrangler secret put TURNSTILE_SECRET_KEY
+
+# Routes for the Worker
+[[routes]]
+pattern = "codensecurity.com/api/contact"
+zone_name = "codensecurity.com"
