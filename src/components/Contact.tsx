@@ -260,6 +260,7 @@ export function Contact() {
                           data-sitekey="0x4AAAAAADFj512HLSo6yLMY"
                           data-theme="light"
                           data-size="normal"
+                          data-action="contact"
                         ></div>
                       </div>
 

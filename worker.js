@@ -23,6 +23,10 @@ async function handlePostRequest(request, env) {
     return new Response('The CAPTCHA check failed. Please try again.', { status: 403 });
   }
 
+  if (outcome.action !== 'contact') {
+    return new Response('Invalid CAPTCHA action.', { status: 403 });
+  }
+
   // Extract form data
   const firstName = body.get('firstName');
   const lastName = body.get('lastName');
