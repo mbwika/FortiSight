@@ -82,23 +82,26 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    if (url.pathname === '/api/contact') {
-      if (request.method === 'POST') {
-        return handlePostRequest(request, env);
+    if (url.pathname.startsWith('/api/')) {
+      if (url.pathname === '/api/contact') {
+        if (request.method === 'POST') {
+          return handlePostRequest(request, env);
+        }
+        if (request.method === 'OPTIONS') {
+          return new Response(null, {
+            status: 204,
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type'
+            }
+          });
+        }
+        return new Response('Method not allowed', { status: 405 });
       }
-      if (request.method === 'OPTIONS') {
-        return new Response(null, {
-          status: 204,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-          }
-        });
-      }
-      return new Response('Method not allowed', { status: 405 });
+      return new Response('Not found', { status: 404 });
     }
 
-    return fetch(request);
+    return env.ASSETS.fetch(request);
   }
 };
