@@ -6,15 +6,15 @@ async function handlePostRequest(request, env) {
   const ip = request.headers.get('CF-Connecting-IP');
 
   // Validate the token by calling the Cloudflare API
-  const formData = new FormData();
-  formData.append('secret', env.TURNSTILE_SECRET_KEY); // Use the secret from environment
-  formData.append('response', token);
-  formData.append('remoteip', ip);
+  const verificationBody = `secret=${encodeURIComponent(env.TURNSTILE_SECRET_KEY)}&response=${encodeURIComponent(token)}&remoteip=${encodeURIComponent(ip || '')}`;
 
   const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
   const result = await fetch(url, {
-    body: formData,
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: verificationBody,
   });
 
   const outcome = await result.json();

@@ -70,7 +70,7 @@ export function Contact() {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const response = await fetch('https://codensecurity.com/api/contact', { // Worker endpoint
+      const response = await fetch('/api/contact', { // Worker endpoint
         method: 'POST',
         body: formDataToSend,
       });
