@@ -62,7 +62,7 @@ async function handlePostRequest(request, env) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: 'noreply@codensecurity.com',
+      from: 'Code & Security Consulting <consulting@codensecurity.com>',
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,
