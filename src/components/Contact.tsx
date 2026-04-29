@@ -34,17 +34,8 @@ export function Contact() {
     message: '',
     privacy: false
   });
-  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
-
-  useEffect(() => {
-    // Define the global callback for Turnstile
-    (window as any).onSuccess = onTurnstileSuccess;
-    return () => {
-      delete (window as any).onSuccess;
-    };
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value, type } = e.target;
@@ -66,6 +57,8 @@ export function Contact() {
       return;
     }
 
+    // Get the Turnstile token directly from the widget
+    const turnstileToken = (window as any).turnstile?.getResponse();
     if (!turnstileToken) {
       toast.error('Please complete the CAPTCHA verification.');
       return;
@@ -102,7 +95,6 @@ export function Contact() {
           message: '',
           privacy: false
         });
-        setTurnstileToken('');
       } else {
         const errorMessage = await response.text();
         setSubmitStatus({ type: 'error', message: errorMessage || 'Failed to send message. Please try again.' });
@@ -113,10 +105,6 @@ export function Contact() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const onTurnstileSuccess = (token: string) => {
-    setTurnstileToken(token);
   };
 
   return (
@@ -280,9 +268,7 @@ export function Contact() {
                           data-sitekey="0x4AAAAAADFj512HLSo6yLMY"
                           data-theme="light"
                           data-size="normal"
-                          data-callback="onSuccess"
                         ></div>
-                        <input type="hidden" name="cf-turnstile-response" value={turnstileToken} />
                       </div>
 
                       <Button 
