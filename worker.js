@@ -16,17 +16,17 @@ async function handlePostRequest(request, env) {
   const ip = request.headers.get('CF-Connecting-IP');
 
   // Validate with Cloudflare
-  // const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  //   body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}&remoteip=${ip}`
-  // });
-
   const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}`
-});
+    body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}&remoteip=${ip}`
+  });
+
+//   const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+//     body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}`
+// });
 
   const outcome = await idResp.json();
   if (!outcome.success) {
