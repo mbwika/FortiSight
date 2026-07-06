@@ -74,7 +74,6 @@ async function handlePostRequest(request, env) {
     body: JSON.stringify({
       from: 'Code & Security Consulting <consulting@codensecurity.com>',
       to: ["consulting@codensecurity.com"],
-      reply_to: emailData.email,
       subject: emailData.subject,
       html: emailData.html,
       reply_to: emailData.replyTo
