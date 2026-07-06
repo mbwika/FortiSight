@@ -3,7 +3,7 @@
 
   This is a code bundle for FortiSight Consulting Website. The original project is available at https://www.figma.com/design/evrGw7ujKE7ouXcLrvEgGU/FortiSight-Consulting-Website.
 
-  The web app is developed using React (TypeScript), Tailwind CSS, Vite server, and deployed using Nginx server. EmailJS is integrated to make it possible to send emails from the code. 
+  The web app is developed using React (TypeScript), Tailwind CSS, and Vite, and is deployed to Cloudflare Workers (static assets + a small API worker for the contact form). EmailJS is integrated to make it possible to send emails from the code.
   Instructions on how to integrate EmailJS are provided under the file: EMAIL_SETUP.md
 
   ## Running the code
@@ -12,30 +12,33 @@
 
   Run `npm run dev` to start the development server.
 
-  ## Building for deployment
+  ## Building
 
-  For React app built with Vite, you can use the following command to package it for deployment:
+  For the React app built with Vite, you can use the following command to package it for deployment:
 
   `npm run build`
 
-  What This Does:
-  Creates a build directory with optimized production files
-  Minifies and compresses all JavaScript, CSS, and assets
-  Generates a production-ready version of your app
-  
-  Build Output:
-  HTML: index.html (0.44 kB)
-  CSS: index-CpugSriv.css (44.73 kB, 7.98 kB gzipped)
-  JavaScript: index-BMtGMFW9.js (331.64 kB, 104.91 kB gzipped)
-  Images: logo346x346white-CYqpkU35.jpg (21.34 kB)
+  This creates a `build/` directory with the minified, production-ready site. `build/` is regenerated from `public/` and `src/` on every run — only `public/` and `src/` need to be edited by hand.
 
-  ## Deployment Options
-  Static Hosting (Netlify, Vercel, GitHub Pages):
+  ## Deployment (automatic)
 
-  Upload the entire build folder
-  Web Server (Apache, Nginx):
+  Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site and runs `wrangler deploy` against the `codensecurity` Cloudflare Worker (see `wrangler.toml`) — the same worker that serves both the static site and the `/api/contact` endpoint (`worker.js`). No manual `wrangler deploy` is needed anymore.
 
-  Copy contents of build to your web server's document root
+  **One-time setup** (required before the workflow can deploy successfully): add these as repository secrets under Settings → Secrets and variables → Actions:
 
-  The build directory contains  complete FortiSight consulting website ready for deployment!
+  | Secret | Where to get it |
+  |---|---|
+  | `CLOUDFLARE_API_TOKEN` | Cloudflare dashboard → My Profile → API Tokens → Create Token → "Edit Cloudflare Workers" template (scope it to this account) |
+  | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → Workers & Pages → Overview (shown in the right-hand sidebar) |
+
+  Until both secrets are set, the workflow run will fail at the `wrangler deploy` step — the build itself will still succeed. Worker-side secrets (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) are separate and already set directly on the Worker via `wrangler secret put`; they don't need to be added to GitHub.
+
+  ## Deployment (manual, fallback)
+
+  You can still deploy directly from your machine if needed:
+
+  ```
+  npm run build
+  npx wrangler deploy
+  ```
   
