@@ -45,6 +45,7 @@ export function Header() {
           <button onClick={() => scrollToSection('about')} className="hover:text-primary transition-colors">About</button>
           {/* <button onClick={() => scrollToSection('team')} className="hover:text-primary transition-colors">Team</button> */}
           <button onClick={() => scrollToSection('contact')} className="hover:text-primary transition-colors">Contact</button>
+          <a href="/reports/aiaf-section9-report.html" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">AIAF</a>
         </nav>
 
         <div className="hidden md:flex items-center space-x-6">
@@ -73,6 +74,7 @@ export function Header() {
             <button onClick={() => scrollToSection('about')} className="hover:text-primary transition-colors text-left">About</button>
             {/* <button onClick={() => scrollToSection('team')} className="hover:text-primary transition-colors text-left">Team</button> */}
             <button onClick={() => scrollToSection('contact')} className="hover:text-primary transition-colors text-left">Contact</button>
+            <a href="/reports/aiaf-section9-report.html" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors text-left" onClick={() => setIsMenuOpen(false)}>AIAF</a>
             <div className="flex flex-col space-y-2 pt-4">
               <Button variant="outline" onClick={() => scrollToSection('contact')}>Get Quote</Button>
               <Button onClick={() => scrollToSection('contact')}>Contact Us</Button>
