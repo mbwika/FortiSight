@@ -13,7 +13,11 @@ compatibility_date = "2024-01-01"
 directory = "./build"
 binding = "ASSETS"
 
-# Routes for the Worker
+# Workers with static assets must route on the whole domain (a path-scoped
+# pattern like "codensecurity.com/api/contact" is rejected by Wrangler 4 —
+# "cannot be routed on a URL which has a path component"); worker.js itself
+# dispatches /api/* to handlePostRequest and falls through to env.ASSETS.fetch
+# for everything else, so a single catch-all route is correct here.
 [[routes]]
-pattern = "codensecurity.com/api/contact"
+pattern = "codensecurity.com/*"
 zone_name = "codensecurity.com"
