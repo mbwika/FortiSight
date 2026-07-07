@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { Turnstile } from "./Turnstile";
 
 const contactInfo = [
   {
@@ -255,13 +256,7 @@ export function Contact() {
                       </div>
 
                       <div className="space-y-2">
-                        <div
-                          className="cf-turnstile"
-                          data-sitekey="0x4AAAAAADFj512HLSo6yLMY"
-                          data-theme="light"
-                          data-size="normal"
-                          data-action="contact"
-                        ></div>
+                        <Turnstile action="contact" />
                       </div>
 
                       <Button 

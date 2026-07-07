@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Turnstile } from "./Turnstile";
 
 const REPORT_URL = "/reports/aiaf-section9-report.html";
 
@@ -28,7 +29,7 @@ const problems = [
   {
     icon: ShieldCheck,
     title: "Unknown models get adopted on trust",
-    body: "AIAF runs intake triage — provenance scoring, serialization scanning, and live behavioral + garak/PyRIT red-team probes — and returns an evidence-backed adoption verdict.",
+    body: "AIAF runs intake triage: provenance scoring, serialization scanning, and live behavioral plus garak/PyRIT red-team probes, then returns an evidence-backed adoption verdict.",
   },
   {
     icon: Radar,
@@ -38,7 +39,7 @@ const problems = [
   {
     icon: Network,
     title: "Agents act with excessive authority",
-    body: "Tool-authorization verdicts, an egress firewall, and a tamper-evident action ledger bound what agents can do — and record every decision as evidence.",
+    body: "Tool-authorization verdicts, an egress firewall, and a tamper-evident action ledger bound what agents can do, and record every decision as evidence.",
   },
   {
     icon: GitBranch,
@@ -48,7 +49,7 @@ const problems = [
   {
     icon: ScrollText,
     title: "Compliance is narrative, not proof",
-    body: "Controls map to NIST AI RMF, OWASP LLM Top 10, MITRE ATLAS, ISO 42001, and EU AI Act, and export as audit-ready evidence packs — not slideware.",
+    body: "Controls map to NIST AI RMF, OWASP LLM Top 10, MITRE ATLAS, ISO 42001, and EU AI Act, and export as audit-ready evidence packs, not slideware.",
   },
 ];
 
@@ -126,17 +127,17 @@ export function AIAF() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
             <span className="text-sm text-primary">Open Source · Apache-2.0</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold">AIAF — AI Assurance Framework</h2>
+          <h2 className="text-3xl md:text-5xl font-bold">AIAF: the AI Assurance Framework</h2>
           <p className="text-lg text-muted-foreground">
             Continuous, evidence-driven security assurance for AI systems. AIAF turns AI
-            security controls — across the model supply chain, RAG, agents, runtime,
-            deployment, and compliance — into audit-ready technical evidence.
+            security controls (across the model supply chain, RAG, agents, runtime,
+            deployment, and compliance) into audit-ready technical evidence.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <Button size="lg" onClick={() => document.getElementById("aiaf-pilot")?.scrollIntoView({ behavior: "smooth" })}>
               Request a demo / pilot
             </Button>
-            <Button size="lg" variant="outline" onClick={() => window.open(REPORT_URL, "_blank")}>
+            <Button size="lg" variant="outline" onClick={() => window.open(REPORT_URL, "_blank", "noopener,noreferrer")}>
               View sample report <ExternalLink className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -149,7 +150,7 @@ export function AIAF() {
             AIAF is an open-source control plane that binds AI security controls to evidence
             objects. Instead of one-off scans or policy narratives, it produces measurable,
             traceable artifacts before deployment, at runtime, during incidents, and for
-            governance — connecting the full AI lifecycle in one system of record.
+            governance. It connects the full AI lifecycle in one system of record.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {capabilities.map((c) => (
@@ -221,7 +222,7 @@ export function AIAF() {
             <p className="text-sm text-muted-foreground max-w-md">
               In the meantime, explore the full sample assessment report below or request a live walkthrough.
             </p>
-            <Button variant="outline" size="sm" onClick={() => window.open(REPORT_URL, "_blank")}>
+            <Button variant="outline" size="sm" onClick={() => window.open(REPORT_URL, "_blank", "noopener,noreferrer")}>
               Open sample report <ExternalLink className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -251,7 +252,7 @@ export function AIAF() {
                     </li>
                   ))}
                 </ul>
-                <Button variant="outline" className="w-full" onClick={() => window.open("https://github.com/mbwika/AI-Assurance-Framework", "_blank")}>
+                <Button variant="outline" className="w-full" onClick={() => window.open("https://github.com/mbwika/AI-Assurance-Framework", "_blank", "noopener,noreferrer")}>
                   View on GitHub <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
               </CardContent>
@@ -288,19 +289,19 @@ export function AIAF() {
           </p>
         </div>
 
-        {/* Section 9 — sample assessment artifacts (embedded) */}
+        {/* Section 9: sample assessment artifacts (embedded) */}
         <div className="space-y-6">
           <div className="text-center space-y-2">
             <h3 className="text-2xl font-bold">Sample assessment artifacts</h3>
             <p className="text-muted-foreground">
-              The complete Section 9 report — AI-BOM, triage, RAG, agent authorization,
-              deployment verification, incident package, evidence pack, and dashboard — embedded below.
+              The complete Section 9 report (AI-BOM, triage, RAG, agent authorization,
+              deployment verification, incident package, evidence pack, and dashboard), embedded below.
             </p>
           </div>
           <Card className="overflow-hidden">
             <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/50">
               <span className="text-sm font-medium flex items-center gap-2">
-                <FileCheck2 className="h-4 w-4 text-primary" /> AIAF Sample Assessment — Section 9
+                <FileCheck2 className="h-4 w-4 text-primary" /> AIAF Sample Assessment (Section 9)
               </span>
               <a href={REPORT_URL} target="_blank" rel="noreferrer" className="text-sm text-primary inline-flex items-center gap-1 hover:underline">
                 Open full report <ExternalLink className="h-3.5 w-3.5" />
@@ -381,13 +382,7 @@ export function AIAF() {
                   </label>
                 </div>
 
-                <div
-                  className="cf-turnstile"
-                  data-sitekey="0x4AAAAAADFj512HLSo6yLMY"
-                  data-theme="light"
-                  data-size="normal"
-                  data-action="aiaf-pilot"
-                ></div>
+                <Turnstile action="aiaf-pilot" />
 
                 <Button type="submit" size="lg" disabled={isSubmitting} className="w-full md:w-auto">
                   {isSubmitting ? "Sending…" : "Request pilot"}
