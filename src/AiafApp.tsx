@@ -1,4 +1,4 @@
-import { Header } from "./components/Header";
+import { AiafHeader } from "./components/AiafHeader";
 import { AIAF } from "./components/AIAF";
 import { Footer } from "./components/Footer";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -22,8 +22,11 @@ export default function AiafApp() {
 
   return (
     <ThemeProvider defaultTheme="light">
-      <div className="min-h-screen">
-        <Header onNavigate={navigate} activeView="aiaf" />
+      <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+        <AiafHeader
+          onBackHome={() => navigate("home")}
+          onRequestDemo={() => navigate("aiaf-pilot")}
+        />
         <main>
           <AIAF />
         </main>
