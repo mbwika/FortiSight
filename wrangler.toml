@@ -21,3 +21,7 @@ binding = "ASSETS"
 [[routes]]
 pattern = "codensecurity.com/*"
 zone_name = "codensecurity.com"
+
+[[routes]]
+pattern = "aiaf.codensecurity.com/*"
+zone_name = "codensecurity.com"

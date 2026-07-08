@@ -88,6 +88,10 @@ async function handlePostRequest(request, env) {
   return new Response('Message sent successfully!', { status: 200 });
 }
 
+function isStaticAssetPath(pathname) {
+  return /\.[a-z0-9]+$/i.test(pathname);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -110,6 +114,20 @@ export default {
         return new Response('Method not allowed', { status: 405 });
       }
       return new Response('Not found', { status: 404 });
+    }
+
+    const isAiafSubdomain = url.hostname.startsWith('aiaf.');
+    const isAiafPath = url.pathname === '/aiaf' || url.pathname === '/aiaf/';
+    const shouldServeSpaShell =
+      request.method === 'GET' &&
+      !isStaticAssetPath(url.pathname) &&
+      (isAiafSubdomain || isAiafPath);
+
+    if (shouldServeSpaShell) {
+      const indexUrl = new URL(request.url);
+      indexUrl.pathname = '/index.html';
+      indexUrl.search = '';
+      return env.ASSETS.fetch(new Request(indexUrl, request));
     }
 
     return env.ASSETS.fetch(request);

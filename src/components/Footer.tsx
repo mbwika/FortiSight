@@ -1,6 +1,7 @@
 import { Separator } from "./ui/separator";
 import { Linkedin, Twitter, Facebook, Youtube } from "lucide-react";
 import { Logo } from "./Logo";
+import type { View } from "../App";
 
 const footerLinks = {
   Services: [
@@ -29,7 +30,12 @@ const footerLinks = {
   ]
 };
 
-export function Footer() {
+type FooterProps = {
+  activeView: View;
+  onNavigate: (target: string) => void;
+};
+
+export function Footer({ activeView, onNavigate }: FooterProps) {
   return (
     <footer className="bg-muted/30 pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -94,7 +100,13 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t text-center">
           <p className="text-sm text-muted-foreground">
             Ready to transform your business? 
-            <a href="#contact" className="text-primary hover:underline ml-1">Get started today</a>
+            <button
+              type="button"
+              onClick={() => onNavigate(activeView === "aiaf" ? "aiaf-pilot" : "contact")}
+              className="text-primary hover:underline ml-1"
+            >
+              Get started today
+            </button>
           </p>
         </div>
       </div>
