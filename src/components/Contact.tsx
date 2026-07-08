@@ -4,10 +4,11 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Mail, Clock } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Turnstile } from "./Turnstile";
+import { submitContactForm } from "../lib/contact";
 
 const contactInfo = [
   {
@@ -71,12 +72,9 @@ export function Contact() {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const response = await fetch('/api/contact', { // Worker endpoint
-        method: 'POST',
-        body: formDataToSend,
-      });
+      const result = await submitContactForm(formDataToSend);
 
-      if (response.ok) {
+      if (result.ok && result.mode === "api") {
         setSubmitStatus({ type: 'success', message: 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.' });
         setFormData({
           firstName: '',
@@ -88,9 +86,13 @@ export function Contact() {
           message: '',
           privacy: false
         });
+      } else if (result.ok && result.mode === "mailto") {
+        setSubmitStatus({
+          type: "success",
+          message: "Your default email app was opened with a prepared draft because direct submission is temporarily unavailable.",
+        });
       } else {
-        const errorMessage = await response.text();
-        setSubmitStatus({ type: 'error', message: errorMessage || 'Failed to send message. Please try again.' });
+        setSubmitStatus({ type: 'error', message: result.message });
       }
     } catch (error) {
       console.error('Error submitting form:', error);

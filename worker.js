@@ -1,54 +1,111 @@
+const TEXT_RESPONSE_HEADERS = {
+  "Content-Type": "text/plain; charset=utf-8",
+};
+
+function getField(body, field) {
+  if (body && typeof body.get === "function") {
+    const value = body.get(field);
+    return typeof value === "string" ? value.trim() : "";
+  }
+
+  if (body && typeof body === "object") {
+    const value = body[field];
+    return typeof value === "string" ? value.trim() : "";
+  }
+
+  return "";
+}
+
 async function handlePostRequest(request, env) {
-  // Try to get the token regardless of content-type
   let token = "";
   let body;
   const contentType = request.headers.get("content-type") || "";
 
-  if (contentType.includes("form")) {
-    body = await request.formData();
-    token = body.get('cf-turnstile-response');
-  } else {
-    const json = await request.json();
-    body = json;
-    token = json['cf-turnstile-response'];
+  try {
+    if (contentType.includes("form")) {
+      body = await request.formData();
+      token = getField(body, "cf-turnstile-response");
+    } else {
+      const json = await request.json();
+      body = json;
+      token = getField(json, "cf-turnstile-response");
+    }
+  } catch (error) {
+    console.error("Failed to parse contact request", error);
+    return new Response("We couldn't read your message. Please try again.", {
+      status: 400,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
+  }
+
+  if (!env.TURNSTILE_SECRET_KEY) {
+    console.error("TURNSTILE_SECRET_KEY is not configured");
+    return new Response("Form protection is not configured yet. Please email consulting@codensecurity.com directly.", {
+      status: 503,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
+  }
+
+  if (!token) {
+    return new Response("Please complete the CAPTCHA verification.", {
+      status: 400,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
   }
 
   const ip = request.headers.get('CF-Connecting-IP');
 
-  // Validate with Cloudflare
-  const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}&remoteip=${ip}`
-  });
-
-//   const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-//     body: `secret=${env.TURNSTILE_SECRET_KEY}&response=${token}`
-// });
-
-  const outcome = await idResp.json();
-  if (!outcome.success) {
-     return new Response(`CAPTCHA Validation failed: ${outcome['error-codes']}`, { status: 403 });
+  let outcome;
+  try {
+    const idResp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${encodeURIComponent(env.TURNSTILE_SECRET_KEY)}&response=${encodeURIComponent(token)}&remoteip=${encodeURIComponent(ip || "")}`
+    });
+    outcome = await idResp.json();
+  } catch (error) {
+    console.error("Turnstile verification failed", error);
+    return new Response("We couldn't verify the CAPTCHA. Please try again.", {
+      status: 502,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
   }
 
-  // Extract form data
-  const firstName = body.get ? body.get('firstName') : body.firstName;
-  const lastName = body.get ? body.get('lastName') : body.lastName;
-  const email = body.get ? body.get('email') : body.email;
-  const phone = body.get ? body.get('phone') : body.phone;
-  const company = body.get ? body.get('company') : body.company;
-  const service = body.get ? body.get('service') : body.service;
-  const message = body.get ? body.get('message') : body.message;
+  if (!outcome.success) {
+     return new Response(`CAPTCHA validation failed: ${(outcome['error-codes'] || []).join(", ")}`, {
+      status: 403,
+      headers: TEXT_RESPONSE_HEADERS,
+     });
+  }
 
-  // Send email using a service like SendGrid, Mailgun, or Resend
-  // For this example, we'll use a simple fetch to a email service
-  // Replace with your actual email sending logic
+  const firstName = getField(body, 'firstName');
+  const lastName = getField(body, 'lastName');
+  const email = getField(body, 'email');
+  const phone = getField(body, 'phone');
+  const company = getField(body, 'company');
+  const service = getField(body, 'service');
+  const message = getField(body, 'message');
+
+  if (!firstName || !email || !message) {
+    return new Response("Please fill in the required fields before submitting.", {
+      status: 400,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
+  }
+
+  if (!env.RESEND_API_KEY) {
+    console.error("RESEND_API_KEY is not configured");
+    return new Response("Email delivery is not configured yet. Please email consulting@codensecurity.com directly.", {
+      status: 503,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
+  }
 
   const emailData = {
     to: 'consulting@codensecurity.com',
-    subject: `Code & Security Consulting Email from ${firstName} ${lastName}`,
+    subject: service
+      ? `Code & Security Consulting enquiry: ${service}`
+      : `Code & Security Consulting Email from ${firstName} ${lastName}`.trim(),
     html: `
       <h3>Message</h3>
       <p><strong>Name:</strong> ${firstName} ${lastName}</p>
@@ -64,28 +121,42 @@ async function handlePostRequest(request, env) {
     replyTo: email
   };
 
-  // Example using Resend (replace with your email service)
-  const emailResponse = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`, // Use the secret from environment
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: 'Code & Security Consulting <consulting@codensecurity.com>',
-      to: ["consulting@codensecurity.com"],
-      subject: emailData.subject,
-      html: emailData.html,
-      reply_to: emailData.replyTo
-    })
-  });
+  let emailResponse;
+  try {
+    emailResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Code & Security Consulting <consulting@codensecurity.com>',
+        to: ["consulting@codensecurity.com"],
+        subject: emailData.subject,
+        html: emailData.html,
+        reply_to: emailData.replyTo
+      })
+    });
+  } catch (error) {
+    console.error('Email delivery request failed:', error);
+    return new Response('Failed to send message right now. Please email consulting@codensecurity.com directly.', {
+      status: 502,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
+  }
 
   if (!emailResponse.ok) {
     console.error('Failed to send email:', await emailResponse.text());
-    return new Response('Failed to send message. Please try again.', { status: 500 });
+    return new Response('Failed to send message right now. Please email consulting@codensecurity.com directly.', {
+      status: 500,
+      headers: TEXT_RESPONSE_HEADERS,
+    });
   }
 
-  return new Response('Message sent successfully!', { status: 200 });
+  return new Response('Message sent successfully!', {
+    status: 200,
+    headers: TEXT_RESPONSE_HEADERS,
+  });
 }
 
 function isStaticAssetPath(pathname) {

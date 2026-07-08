@@ -5,11 +5,14 @@ import { Textarea } from "./ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import {
   ShieldCheck, Boxes, GitBranch, Network, ScrollText, FileCheck2,
-  Play, Check, Mail, ExternalLink, AlertTriangle, Radar,
+  Play, Check, Mail, ExternalLink, AlertTriangle, Radar, Sparkles,
+  Cpu, LockKeyhole, ArrowRight, BadgeCheck, Telescope,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Turnstile } from "./Turnstile";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { submitContactForm } from "../lib/contact";
 
 const REPORT_URL = "/reports/aiaf-section9-report.html";
 
@@ -82,6 +85,42 @@ const professionalFeatures = [
   "Priority support & onboarding",
 ];
 
+const assuranceSignals = [
+  {
+    icon: BadgeCheck,
+    label: "Signed evidence",
+    body: "Every assessment is packaged as audit-ready technical proof rather than a slide deck summary.",
+  },
+  {
+    icon: LockKeyhole,
+    label: "Pre-deployment gates",
+    body: "RAG, agent, and model checks can stop risky AI changes before they reach production.",
+  },
+  {
+    icon: Cpu,
+    label: "Live runtime coverage",
+    body: "Track drift, tool access, egress, and compliance status from one control plane.",
+  },
+];
+
+const workflow = [
+  {
+    icon: Sparkles,
+    title: "Inventory the system",
+    body: "Capture models, prompts, tools, guardrails, RAG indexes, dependencies, and deployment artifacts in a signed AI-BOM.",
+  },
+  {
+    icon: Telescope,
+    title: "Stress the weak points",
+    body: "Run provenance checks, adversarial probing, RAG taint analysis, and policy validation before rollout.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Ship with evidence",
+    body: "Bundle findings, control coverage, and remediation steps into a package security and compliance teams can act on.",
+  },
+];
+
 export function AIAF() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error" | null; message: string }>({ type: null, message: "" });
@@ -103,13 +142,17 @@ export function AIAF() {
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: "" });
     try {
-      const response = await fetch("/api/contact", { method: "POST", body: data });
-      if (response.ok) {
+      const result = await submitContactForm(data);
+      if (result.ok && result.mode === "api") {
         setSubmitStatus({ type: "success", message: "Thanks! Your pilot request has been sent. We'll be in touch within one business day." });
         formElement.reset();
+      } else if (result.ok && result.mode === "mailto") {
+        setSubmitStatus({
+          type: "success",
+          message: "Your default email app was opened with a prepared AIAF enquiry because direct submission is temporarily unavailable.",
+        });
       } else {
-        const msg = await response.text();
-        setSubmitStatus({ type: "error", message: msg || "Failed to send. Please try again." });
+        setSubmitStatus({ type: "error", message: result.message });
       }
     } catch {
       setSubmitStatus({ type: "error", message: "Failed to send. Please try again." });
@@ -119,32 +162,105 @@ export function AIAF() {
   };
 
   return (
-    <section id="aiaf" className="py-20 bg-muted/30">
-      <div className="container mx-auto px-4 space-y-20">
+    <section
+      id="aiaf"
+      className="bg-[linear-gradient(180deg,rgba(139,92,246,0.09),rgba(255,255,255,0)_24%),linear-gradient(135deg,rgba(15,23,42,0.02),rgba(139,92,246,0.08))] pt-28 pb-24"
+    >
+      <div className="container mx-auto px-4 space-y-24">
 
         {/* Intro */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <span className="text-sm text-primary">Open Source · Apache-2.0</span>
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-background/85 px-4 py-2 shadow-sm backdrop-blur">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Open Source · Apache-2.0</span>
+            </div>
+            <div className="space-y-5">
+              <h2 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
+                AIAF turns AI security reviews into operational evidence.
+              </h2>
+              <p className="max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
+                Continuous assurance for models, RAG, agents, runtime behavior, deployment drift,
+                and compliance. AIAF gives security teams proof they can ship with, not just
+                one-time screenshots and narrative reports.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                size="lg"
+                className="group"
+                onClick={() => document.getElementById("aiaf-pilot")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                Request a demo / pilot
+                <ArrowRight className="transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => window.open(REPORT_URL, "_blank", "noopener,noreferrer")}>
+                View sample report <ExternalLink className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {assuranceSignals.map((signal) => (
+                <Card key={signal.label} className="border-primary/10 bg-background/80 shadow-sm backdrop-blur">
+                  <CardContent className="space-y-3 p-5">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                      <signal.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-semibold">{signal.label}</p>
+                      <p className="text-sm leading-6 text-muted-foreground">{signal.body}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold">AIAF: the AI Assurance Framework</h2>
-          <p className="text-lg text-muted-foreground">
-            Continuous, evidence-driven security assurance for AI systems. AIAF turns AI
-            security controls (across the model supply chain, RAG, agents, runtime,
-            deployment, and compliance) into audit-ready technical evidence.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <Button size="lg" onClick={() => document.getElementById("aiaf-pilot")?.scrollIntoView({ behavior: "smooth" })}>
-              Request a demo / pilot
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => window.open(REPORT_URL, "_blank", "noopener,noreferrer")}>
-              View sample report <ExternalLink className="ml-2 h-4 w-4" />
-            </Button>
+
+          <div className="relative">
+            <div className="absolute -left-8 top-10 hidden h-32 w-32 rounded-full bg-primary/15 blur-3xl lg:block" />
+            <div className="absolute -right-8 bottom-10 hidden h-40 w-40 rounded-full bg-sky-200/40 blur-3xl lg:block" />
+            <Card className="overflow-hidden border-primary/10 bg-background/90 shadow-2xl backdrop-blur">
+              <div className="grid gap-0 md:grid-cols-[1.15fr_0.85fr]">
+                <div className="relative min-h-[320px]">
+                  <ImageWithFallback
+                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200"
+                    alt="Abstract network visualization representing AI systems and security telemetry"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/45 via-slate-900/10 to-primary/30" />
+                  <div className="absolute bottom-0 left-0 right-0 space-y-2 p-6 text-white">
+                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/80">Evidence-first workflow</p>
+                    <p className="max-w-sm text-2xl font-semibold">Map what your AI system does, prove what it should do, and catch drift fast.</p>
+                  </div>
+                </div>
+                <div className="space-y-5 p-6">
+                  <div className="rounded-2xl border border-primary/10 bg-primary/5 p-5">
+                    <p className="text-sm font-medium text-primary">What teams get</p>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      Signed inventories, red-team output, gate decisions, deployment verification, and compliance evidence in one place.
+                    </p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-1">
+                    <div className="rounded-2xl border bg-background p-4">
+                      <p className="text-3xl font-bold">6</p>
+                      <p className="mt-1 text-sm text-muted-foreground">core AI security gaps covered</p>
+                    </div>
+                    <div className="rounded-2xl border bg-background p-4">
+                      <p className="text-3xl font-bold">9</p>
+                      <p className="mt-1 text-sm text-muted-foreground">sample artifact sections in the report</p>
+                    </div>
+                    <div className="rounded-2xl border bg-background p-4">
+                      <p className="text-3xl font-bold">1</p>
+                      <p className="mt-1 text-sm text-muted-foreground">control plane for inventory, gates, and evidence</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
 
         {/* What AIAF is */}
-        <div className="max-w-4xl mx-auto text-center space-y-6">
+        <div className="mx-auto max-w-4xl space-y-6 text-center">
           <h3 className="text-2xl font-bold">What AIAF is</h3>
           <p className="text-muted-foreground leading-7">
             AIAF is an open-source control plane that binds AI security controls to evidence
@@ -159,6 +275,31 @@ export function AIAF() {
           </div>
         </div>
 
+        <div className="space-y-8">
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-bold">How the assurance flow works</h3>
+            <p className="text-muted-foreground">A practical sequence that helps teams move from discovery to deployment confidence.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {workflow.map((step, index) => (
+              <Card key={step.title} className="border-primary/10 bg-background/85 shadow-sm">
+                <CardContent className="space-y-4 p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+                      <step.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="text-xs font-semibold tracking-[0.22em] text-muted-foreground">0{index + 1}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-lg font-semibold">{step.title}</h4>
+                    <p className="text-sm leading-6 text-muted-foreground">{step.body}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
         {/* Problems it solves */}
         <div className="space-y-8">
           <div className="text-center space-y-2">
@@ -167,7 +308,7 @@ export function AIAF() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {problems.map((p) => (
-              <Card key={p.title} className="hover:shadow-md transition-shadow">
+              <Card key={p.title} className="border-primary/10 bg-background/90 hover:shadow-md transition-shadow">
                 <CardContent className="pt-6 space-y-3">
                   <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center">
                     <p.icon className="h-6 w-6 text-primary" />
@@ -189,7 +330,7 @@ export function AIAF() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {screenshots.map((s) => (
               <a key={s.src} href={s.src} target="_blank" rel="noreferrer" className="group block">
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
+                <Card className="h-full overflow-hidden border-primary/10 bg-background/90 hover:shadow-lg transition-shadow">
                   <div className="h-48 overflow-hidden bg-muted">
                     <img
                       src={s.src}
@@ -214,7 +355,7 @@ export function AIAF() {
             <h3 className="text-2xl font-bold">Short demo</h3>
             <p className="text-muted-foreground">A two-minute walkthrough of an end-to-end assessment.</p>
           </div>
-          <div className="relative aspect-video rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 flex flex-col items-center justify-center gap-3 text-center px-6">
+          <div className="relative aspect-video rounded-2xl border-2 border-dashed border-primary/30 bg-background/70 flex flex-col items-center justify-center gap-3 text-center px-6 shadow-sm">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               <Play className="h-8 w-8 text-primary" />
             </div>
@@ -235,7 +376,7 @@ export function AIAF() {
             <p className="text-muted-foreground">Start free and self-hosted. Upgrade when you need the enterprise control plane.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <Card className="flex flex-col">
+            <Card className="flex flex-col border-primary/10 bg-background/90">
               <CardHeader>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 w-fit mb-2">
                   <span className="text-xs text-primary">Apache-2.0 · Free</span>
@@ -258,7 +399,7 @@ export function AIAF() {
               </CardContent>
             </Card>
 
-            <Card className="flex flex-col border-primary shadow-md">
+            <Card className="flex flex-col border-primary shadow-md bg-background/95">
               <CardHeader>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary text-primary-foreground w-fit mb-2">
                   <span className="text-xs">Self-hosted · Paid</span>
@@ -298,7 +439,7 @@ export function AIAF() {
               deployment verification, incident package, evidence pack, and dashboard), embedded below.
             </p>
           </div>
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden border-primary/10 bg-background/90">
             <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/50">
               <span className="text-sm font-medium flex items-center gap-2">
                 <FileCheck2 className="h-4 w-4 text-primary" /> AIAF Sample Assessment (Section 9)
@@ -327,7 +468,7 @@ export function AIAF() {
             </p>
           </div>
 
-          <Card className="shadow-lg">
+          <Card className="border-primary/10 bg-background/90 shadow-xl">
             <CardContent className="pt-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {submitStatus.type && (
@@ -391,7 +532,7 @@ export function AIAF() {
             </CardContent>
           </Card>
 
-          <Card className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+          <Card className="border-primary/10 bg-background/90 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Mail className="h-6 w-6 text-primary" />

@@ -27,8 +27,7 @@ export function Header({ onNavigate, activeView }: HeaderProps) {
     onNavigate(target);
     setIsMenuOpen(false);
   };
-
-  const aiafActive = activeView === "aiaf";
+  const primaryCtaTarget = activeView === "aiaf" ? "aiaf-pilot" : "contact";
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -50,15 +49,14 @@ export function Header({ onNavigate, activeView }: HeaderProps) {
           <button onClick={() => go('about')} className="hover:text-primary transition-colors">About</button>
           {/* <button onClick={() => go('team')} className="hover:text-primary transition-colors">Team</button> */}
           <button onClick={() => go('contact')} className="hover:text-primary transition-colors">Contact</button>
-          <button onClick={() => go('aiaf')} className={`transition-colors hover:text-primary ${aiafActive ? 'text-primary font-semibold' : ''}`}>AIAF</button>
         </nav>
 
         <div className="hidden md:flex items-center space-x-6">
           <ThemeToggle />
           </div>
           <div className="hidden md:flex items-center space-x-4">
-          <Button variant="outline" onClick={() => go('contact')}>Get Quote</Button>
-          <Button onClick={() => go('contact')}>Contact Us</Button>
+          <Button variant="outline" onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Request Demo" : "Get Quote"}</Button>
+          <Button onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Start Pilot" : "Contact Us"}</Button>
         </div>
 
         <div className="md:hidden flex items-center space-x-2">
@@ -79,10 +77,9 @@ export function Header({ onNavigate, activeView }: HeaderProps) {
             <button onClick={() => go('about')} className="hover:text-primary transition-colors text-left">About</button>
             {/* <button onClick={() => go('team')} className="hover:text-primary transition-colors text-left">Team</button> */}
             <button onClick={() => go('contact')} className="hover:text-primary transition-colors text-left">Contact</button>
-            <button onClick={() => go('aiaf')} className={`text-left transition-colors hover:text-primary ${aiafActive ? 'text-primary font-semibold' : ''}`}>AIAF</button>
             <div className="flex flex-col space-y-2 pt-4">
-              <Button variant="outline" onClick={() => go('contact')}>Get Quote</Button>
-              <Button onClick={() => go('contact')}>Contact Us</Button>
+              <Button variant="outline" onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Request Demo" : "Get Quote"}</Button>
+              <Button onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Start Pilot" : "Contact Us"}</Button>
             </div>
           </nav>
         </div>
