@@ -1,7 +1,7 @@
 import { Separator } from "./ui/separator";
 import { Linkedin, Twitter, Facebook, Youtube } from "lucide-react";
 import { Logo } from "./Logo";
-import type { View } from "../App";
+import type { View } from "../lib/view";
 
 const footerLinks = {
   Services: [

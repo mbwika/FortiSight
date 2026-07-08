@@ -3,7 +3,7 @@ import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo, LogoCompact } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
-import type { View } from "../App";
+import type { View } from "../lib/view";
 
 type HeaderProps = {
   onNavigate: (target: string) => void;

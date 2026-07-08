@@ -189,16 +189,16 @@ export default {
 
     const isAiafSubdomain = url.hostname.startsWith('aiaf.');
     const isAiafPath = url.pathname === '/aiaf' || url.pathname === '/aiaf/';
-    const shouldServeSpaShell =
+    const shouldServeAiafShell =
       request.method === 'GET' &&
       !isStaticAssetPath(url.pathname) &&
       (isAiafSubdomain || isAiafPath);
 
-    if (shouldServeSpaShell) {
-      const indexUrl = new URL(request.url);
-      indexUrl.pathname = '/index.html';
-      indexUrl.search = '';
-      return env.ASSETS.fetch(new Request(indexUrl, request));
+    if (shouldServeAiafShell) {
+      const aiafUrl = new URL(request.url);
+      aiafUrl.pathname = '/aiaf.html';
+      aiafUrl.search = '';
+      return env.ASSETS.fetch(new Request(aiafUrl, request));
     }
 
     return env.ASSETS.fetch(request);

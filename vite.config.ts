@@ -53,6 +53,12 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          aiaf: path.resolve(__dirname, 'aiaf.html'),
+        },
+      },
     },
     server: {
       port: 3000,
