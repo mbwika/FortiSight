@@ -4,6 +4,7 @@ import { Footer } from "./components/Footer";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { Toaster } from "./components/Toaster";
 import { ThemeProvider } from "./components/ThemeProvider";
+import "./styles/aiaf.css";
 
 export default function AiafApp() {
   const navigate = (target: string) => {

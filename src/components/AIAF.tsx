@@ -169,7 +169,7 @@ export function AIAF() {
       <div className="container mx-auto px-4 space-y-24">
 
         {/* Intro */}
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div className="aiaf-hero-grid">
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-background/85 px-4 py-2 shadow-sm backdrop-blur">
               <ShieldCheck className="h-4 w-4 text-primary" />
@@ -198,7 +198,7 @@ export function AIAF() {
                 View sample report <ExternalLink className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="aiaf-signal-grid">
               {assuranceSignals.map((signal) => (
                 <Card key={signal.label} className="border-primary/10 bg-background/80 shadow-sm backdrop-blur">
                   <CardContent className="space-y-3 p-5">
@@ -219,7 +219,7 @@ export function AIAF() {
             <div className="absolute -left-8 top-10 hidden h-32 w-32 rounded-full bg-primary/15 blur-3xl lg:block" />
             <div className="absolute -right-8 bottom-10 hidden h-40 w-40 rounded-full bg-sky-200/40 blur-3xl lg:block" />
             <Card className="overflow-hidden border-primary/10 bg-background/90 shadow-2xl backdrop-blur">
-              <div className="grid gap-0 md:grid-cols-[1.15fr_0.85fr]">
+              <div className="aiaf-preview-grid">
                 <div className="relative min-h-[320px]">
                   <ImageWithFallback
                     src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200"
@@ -239,7 +239,7 @@ export function AIAF() {
                       Signed inventories, red-team output, gate decisions, deployment verification, and compliance evidence in one place.
                     </p>
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-1">
+                  <div className="aiaf-stats-grid">
                     <div className="rounded-2xl border bg-background p-4">
                       <p className="text-3xl font-bold">6</p>
                       <p className="mt-1 text-sm text-muted-foreground">core AI security gaps covered</p>
@@ -280,7 +280,7 @@ export function AIAF() {
             <h3 className="text-2xl font-bold">How the assurance flow works</h3>
             <p className="text-muted-foreground">A practical sequence that helps teams move from discovery to deployment confidence.</p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="aiaf-workflow-grid">
             {workflow.map((step, index) => (
               <Card key={step.title} className="border-primary/10 bg-background/85 shadow-sm">
                 <CardContent className="space-y-4 p-6">
@@ -327,7 +327,7 @@ export function AIAF() {
             <h3 className="text-2xl font-bold">Screenshots</h3>
             <p className="text-muted-foreground">Real artifacts from a live AIAF assessment. Click any image to enlarge.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="aiaf-screenshot-grid">
             {screenshots.map((s) => (
               <a key={s.src} href={s.src} target="_blank" rel="noreferrer" className="group block">
                 <Card className="h-full overflow-hidden border-primary/10 bg-background/90 hover:shadow-lg transition-shadow">
