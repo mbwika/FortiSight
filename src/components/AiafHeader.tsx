@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { Logo, LogoCompact } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
@@ -26,10 +26,6 @@ export function AiafHeader({ onBackHome, onRequestDemo }: AiafHeaderProps) {
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Button variant="ghost" size="sm" onClick={onBackHome} className="hidden sm:inline-flex">
-            <ArrowLeft className="h-4 w-4" />
-            Main Site
-          </Button>
           <ThemeToggle />
           <Button size="sm" onClick={onRequestDemo} className="group">
             Request Demo

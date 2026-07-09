@@ -76,7 +76,7 @@ const communityFeatures = [
 ];
 
 const professionalFeatures = [
-  "Everything in Community, plus:",
+  "Everything in AIAF Sentry, plus:",
   "SSO (OIDC/SAML) & enforced RBAC",
   "Multi-project / team isolation",
   "Scheduled & continuous assessments",
@@ -369,10 +369,10 @@ export function AIAF() {
           </div>
         </div>
 
-        {/* Community vs Professional */}
+        {/* AIAF Sentry vs AIAF Vanguard */}
         <div className="space-y-8">
           <div className="text-center space-y-2">
-            <h3 className="text-2xl font-bold">Community vs Professional</h3>
+            <h3 className="text-2xl font-bold">AIAF Sentry vs AIAF Vanguard</h3>
             <p className="text-muted-foreground">Start free and self-hosted. Upgrade when you need the enterprise control plane.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -381,7 +381,7 @@ export function AIAF() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 w-fit mb-2">
                   <span className="text-xs text-primary">Apache-2.0 · Free</span>
                 </div>
-                <CardTitle>Community</CardTitle>
+                <CardTitle>AIAF Sentry</CardTitle>
                 <p className="text-sm text-muted-foreground">Self-hosted open source for security teams.</p>
               </CardHeader>
               <CardContent className="flex flex-col flex-1 justify-between space-y-6">
@@ -404,7 +404,7 @@ export function AIAF() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary text-primary-foreground w-fit mb-2">
                   <span className="text-xs">Self-hosted · Paid</span>
                 </div>
-                <CardTitle>Professional</CardTitle>
+                <CardTitle>AIAF Vanguard</CardTitle>
                 <p className="text-sm text-muted-foreground">The enterprise control plane, on your infrastructure.</p>
               </CardHeader>
               <CardContent className="flex flex-col flex-1 justify-between space-y-6">
