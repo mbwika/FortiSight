@@ -1,6 +1,5 @@
 
-// reference to logo image file
-import logoImage from '../assets/logo346x346white.jpg'; 
+import logoImage from "../assets/code-n-security.png";
 
 
 export function Logo({ className = "" }: { className?: string }) {
@@ -9,18 +8,19 @@ export function Logo({ className = "" }: { className?: string }) {
       href="https://codensecurity.com" 
       target="_blank" 
       rel="noopener noreferrer"
-      className={`flex items-center space-x-3 hover:opacity-80 transition-opacity ${className}`}
+      className={`flex items-center gap-3 hover:opacity-80 transition-opacity ${className}`}
     >
-      <div className="w-10 h-10">
+      <div className="h-14 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <img 
           src={logoImage} 
-          alt="Codensecurity Logo" 
-          className="w-full h-full object-contain"
+          alt="Code & Security logo"
+          className="h-full w-full scale-125 object-cover object-center"
         />
       </div>
       <div className="flex flex-col">
-        <span className="text-lg font-bold leading-tight">Code & Security Consulting</span>
-        <span className="text-xs leading-tight tracking-wide italic">Identifying and Mitigating Cybersecurity Risk</span>
+        <span className="text-xs font-semibold leading-tight tracking-wide text-slate-950 dark:text-white">
+          Identifying and Mitigating Cybersecurity Risk
+        </span>
       </div>
     </a>
   );
@@ -32,18 +32,19 @@ export function LogoCompact({ className = "" }: { className?: string }) {
       href="https://codensecurity.com" 
       target="_blank" 
       rel="noopener noreferrer"
-      className={`flex items-center space-x-2 hover:opacity-80 transition-opacity ${className}`}
+      className={`flex items-center gap-2 hover:opacity-80 transition-opacity ${className}`}
     >
-      <div className="w-8 h-8">
+      <div className="h-11 w-24 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <img 
           src={logoImage} 
-          alt="Codensecurity Logo" 
-          className="w-full h-full object-contain"
+          alt="Code & Security logo"
+          className="h-full w-full scale-125 object-cover object-center"
         />
       </div>
       <div className="flex flex-col">
-        <span className="text-base font-bold leading-tight">Code & Security Consulting</span>
-        <span className="text-xs text-muted-foreground leading-tight tracking-wide italic">Identifying and Mitigating Cybersecurity Risk</span>
+        <span className="text-xs font-semibold leading-tight tracking-wide text-slate-950 dark:text-white">
+          Identifying and Mitigating Cybersecurity Risk
+        </span>
       </div>
     </a>
   );
