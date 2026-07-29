@@ -1,7 +1,6 @@
 const TEXT_RESPONSE_HEADERS = {
   "Content-Type": "text/plain; charset=utf-8",
 };
-const AIAF_HOSTNAME = "aiaf.codensecurity.com";
 
 function getField(body, field) {
   if (body && typeof body.get === "function") {
@@ -188,43 +187,9 @@ export default {
       return new Response('Not found', { status: 404 });
     }
 
-    const isAiafSubdomain = url.hostname === AIAF_HOSTNAME;
-    const isAiafPath = url.pathname === '/aiaf' || url.pathname === '/aiaf/' || url.pathname === '/aiaf.html';
-
-    if ((request.method === 'GET' || request.method === 'HEAD') && !isAiafSubdomain && isAiafPath) {
-      const redirectUrl = new URL(request.url);
-      redirectUrl.hostname = AIAF_HOSTNAME;
-      redirectUrl.pathname = '/';
-      return Response.redirect(redirectUrl.toString(), 301);
-    }
-
-    if (
-      (request.method === 'GET' || request.method === 'HEAD') &&
-      isAiafSubdomain &&
-      (url.pathname === '/index.html' || url.pathname === '/aiaf.html')
-    ) {
-      const aiafUrl = new URL(request.url);
-      aiafUrl.pathname = '/aiaf.html';
-      aiafUrl.search = '';
-      return env.ASSETS.fetch(new Request(aiafUrl, request));
-    }
-
-    const shouldServeAiafShell =
-      request.method === 'GET' &&
-      !isStaticAssetPath(url.pathname) &&
-      isAiafSubdomain;
-
-    if (shouldServeAiafShell) {
-      const aiafUrl = new URL(request.url);
-      aiafUrl.pathname = '/aiaf.html';
-      aiafUrl.search = '';
-      return env.ASSETS.fetch(new Request(aiafUrl, request));
-    }
-
     const shouldServeMainShell =
       request.method === 'GET' &&
-      !isStaticAssetPath(url.pathname) &&
-      !isAiafSubdomain;
+      !isStaticAssetPath(url.pathname);
 
     if (shouldServeMainShell) {
       const mainUrl = new URL(request.url);

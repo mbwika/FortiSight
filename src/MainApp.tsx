@@ -30,14 +30,14 @@ export default function MainApp() {
   return (
     <ThemeProvider defaultTheme="light">
       <div className="min-h-screen">
-        <Header onNavigate={navigate} activeView="main" />
+        <Header onNavigate={navigate} />
         <main>
           <Hero />
           <Services />
           <About />
           <Contact />
         </main>
-        <Footer onNavigate={navigate} activeView="main" />
+        <Footer onNavigate={navigate} />
         <ScrollToTop />
         <Toaster />
       </div>

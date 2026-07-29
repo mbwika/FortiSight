@@ -3,14 +3,12 @@ import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo, LogoCompact } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
-import type { View } from "../lib/view";
 
 type HeaderProps = {
   onNavigate: (target: string) => void;
-  activeView: View;
 };
 
-export function Header({ onNavigate, activeView }: HeaderProps) {
+export function Header({ onNavigate }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -27,7 +25,7 @@ export function Header({ onNavigate, activeView }: HeaderProps) {
     onNavigate(target);
     setIsMenuOpen(false);
   };
-  const primaryCtaTarget = activeView === "aiaf" ? "aiaf-pilot" : "contact";
+  const primaryCtaTarget = "contact";
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -55,8 +53,8 @@ export function Header({ onNavigate, activeView }: HeaderProps) {
           <ThemeToggle />
           </div>
           <div className="hidden md:flex items-center space-x-4">
-          <Button variant="outline" onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Request Demo" : "Get Quote"}</Button>
-          <Button onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Start Pilot" : "Contact Us"}</Button>
+          <Button variant="outline" onClick={() => go(primaryCtaTarget)}>Get Quote</Button>
+          <Button onClick={() => go(primaryCtaTarget)}>Contact Us</Button>
         </div>
 
         <div className="md:hidden flex items-center space-x-2">
@@ -78,8 +76,8 @@ export function Header({ onNavigate, activeView }: HeaderProps) {
             {/* <button onClick={() => go('team')} className="hover:text-primary transition-colors text-left">Team</button> */}
             <button onClick={() => go('contact')} className="hover:text-primary transition-colors text-left">Contact</button>
             <div className="flex flex-col space-y-2 pt-4">
-              <Button variant="outline" onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Request Demo" : "Get Quote"}</Button>
-              <Button onClick={() => go(primaryCtaTarget)}>{activeView === "aiaf" ? "Start Pilot" : "Contact Us"}</Button>
+              <Button variant="outline" onClick={() => go(primaryCtaTarget)}>Get Quote</Button>
+              <Button onClick={() => go(primaryCtaTarget)}>Contact Us</Button>
             </div>
           </nav>
         </div>
