@@ -1,0 +1,63 @@
+.aiaf-hero-grid,
+.aiaf-signal-grid,
+.aiaf-preview-grid,
+.aiaf-stats-grid,
+.aiaf-workflow-grid,
+.aiaf-screenshot-grid {
+  display: grid;
+}
+
+.aiaf-hero-grid {
+  gap: 2.5rem;
+}
+
+.aiaf-signal-grid,
+.aiaf-preview-grid,
+.aiaf-stats-grid,
+.aiaf-workflow-grid,
+.aiaf-screenshot-grid {
+  gap: 1.5rem;
+}
+
+.aiaf-preview-grid {
+  gap: 0;
+}
+
+@media (min-width: 40rem) {
+  .aiaf-signal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .aiaf-stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .aiaf-screenshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) {
+  .aiaf-preview-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .aiaf-stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aiaf-workflow-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .aiaf-hero-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+  }
+
+  .aiaf-screenshot-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

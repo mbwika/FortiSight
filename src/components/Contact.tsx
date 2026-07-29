@@ -4,10 +4,11 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Mail, Clock } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { useForm, ValidationError } from "@formspree/react";
+import { Turnstile } from "./Turnstile";
+import { submitContactForm } from "../lib/contact";
 
 const contactInfo = [
   {
@@ -25,7 +26,6 @@ const contactInfo = [
 ];
 
 export function Contact() {
-  const [state, handleFormSubmit] = useForm("xojygrdq");
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,22 +36,8 @@ export function Contact() {
     message: '',
     privacy: false
   });
-
-  useEffect(() => {
-    if (state.succeeded) {
-      toast.success('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.');
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: '',
-        privacy: false
-      });
-    }
-  }, [state.succeeded]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value, type } = e.target;
@@ -65,14 +51,55 @@ export function Contact() {
     setFormData(prev => ({ ...prev, service: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.message || !formData.privacy) {
-      e.preventDefault();
       toast.error('Please fill in all required fields and accept the privacy policy.');
       return;
     }
 
-    await handleFormSubmit(e);
+    const formElement = e.currentTarget;
+    const formDataToSend = new FormData(formElement);
+    const token = formDataToSend.get('cf-turnstile-response');
+
+    if (!token) {
+      toast.error('Please complete the CAPTCHA verification.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: '' });
+
+    try {
+      const result = await submitContactForm(formDataToSend);
+
+      if (result.ok && result.mode === "api") {
+        setSubmitStatus({ type: 'success', message: 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.' });
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          company: '',
+          service: '',
+          message: '',
+          privacy: false
+        });
+      } else if (result.ok && result.mode === "mailto") {
+        setSubmitStatus({
+          type: "success",
+          message: "Your default email app was opened with a prepared draft because direct submission is temporarily unavailable.",
+        });
+      } else {
+        setSubmitStatus({ type: 'error', message: result.message });
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -99,25 +126,13 @@ export function Contact() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <form onSubmit={handleSubmit}>
-                  {state.succeeded && (
-                    <Alert className="border-green-200 bg-green-50 text-green-900">
-                      <AlertTitle>Message sent</AlertTitle>
-                      <AlertDescription>
-                        Your message has been submitted successfully. We will review it and respond as soon as possible.
-                      </AlertDescription>
+                  {submitStatus.type && (
+                    <Alert variant={submitStatus.type === 'error' ? 'destructive' : 'default'}>
+                      <AlertTitle>{submitStatus.type === 'success' ? 'Message sent' : 'Submission failed'}</AlertTitle>
+                      <AlertDescription>{submitStatus.message}</AlertDescription>
                     </Alert>
                   )}
 
-                  {state.errors && state.errors.length > 0 && (
-                    <Alert variant="destructive">
-                      <AlertTitle>Submission failed</AlertTitle>
-                      <AlertDescription>
-                        Please correct any errors below and try again.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  <ValidationError errors={state.errors} />
                   <div className="space-y-6">
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -242,13 +257,17 @@ export function Contact() {
                         </label>
                       </div>
 
+                      <div className="space-y-2">
+                        <Turnstile action="contact" />
+                      </div>
+
                       <Button 
                         type="submit" 
                         size="lg" 
                         className="w-full md:w-auto" 
-                        disabled={state.submitting}
+                        disabled={isSubmitting}
                       >
-                        {state.submitting ? 'Sending...' : 'Send Message'}
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
                       </Button>
                     </div>
                   </form>
