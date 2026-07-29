@@ -163,6 +163,10 @@ function isStaticAssetPath(pathname) {
   return /\.[a-z0-9]+$/i.test(pathname);
 }
 
+function apexHostname(hostname) {
+  return hostname.startsWith('www.') ? hostname.slice(4) : hostname;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -189,16 +193,36 @@ export default {
 
     const isAiafSubdomain = url.hostname.startsWith('aiaf.');
     const isAiafPath = url.pathname === '/aiaf' || url.pathname === '/aiaf/';
+
+    if ((request.method === 'GET' || request.method === 'HEAD') && !isAiafSubdomain && isAiafPath) {
+      const redirectUrl = new URL(request.url);
+      redirectUrl.hostname = `aiaf.${apexHostname(url.hostname)}`;
+      redirectUrl.pathname = '/';
+      return Response.redirect(redirectUrl.toString(), 301);
+    }
+
     const shouldServeAiafShell =
       request.method === 'GET' &&
       !isStaticAssetPath(url.pathname) &&
-      (isAiafSubdomain || isAiafPath);
+      isAiafSubdomain;
 
     if (shouldServeAiafShell) {
       const aiafUrl = new URL(request.url);
       aiafUrl.pathname = '/aiaf.html';
       aiafUrl.search = '';
       return env.ASSETS.fetch(new Request(aiafUrl, request));
+    }
+
+    const shouldServeMainShell =
+      request.method === 'GET' &&
+      !isStaticAssetPath(url.pathname) &&
+      !isAiafSubdomain;
+
+    if (shouldServeMainShell) {
+      const mainUrl = new URL(request.url);
+      mainUrl.pathname = '/index.html';
+      mainUrl.search = '';
+      return env.ASSETS.fetch(new Request(mainUrl, request));
     }
 
     return env.ASSETS.fetch(request);

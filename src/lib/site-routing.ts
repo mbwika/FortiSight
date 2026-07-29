@@ -6,12 +6,20 @@ export function isAiafSubdomain(hostname: string) {
   return hostname.startsWith(AIAF_SUBDOMAIN_PREFIX);
 }
 
+function isLocalHostname(hostname: string) {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+}
+
+function apexHostname(hostname: string) {
+  return hostname.startsWith("www.") ? hostname.slice(4) : hostname;
+}
+
 export function getSitePage(location: Pick<Location, "hostname" | "pathname">): SitePage {
   if (isAiafSubdomain(location.hostname)) {
     return "aiaf";
   }
 
-  return location.pathname === "/aiaf" || location.pathname === "/aiaf/" ? "aiaf" : "main";
+  return "main";
 }
 
 export function buildMainSiteUrl(
@@ -26,6 +34,18 @@ export function buildMainSiteUrl(
   return section ? `${origin}/#${section}` : `${origin}/`;
 }
 
-export function getAiafPath(location: Pick<Location, "hostname">) {
-  return isAiafSubdomain(location.hostname) ? "/" : "/aiaf";
+export function getAiafPath(
+  location: Pick<Location, "protocol" | "hostname" | "port">,
+) {
+  if (isAiafSubdomain(location.hostname)) {
+    return "/";
+  }
+  if (isLocalHostname(location.hostname)) {
+    return "/aiaf";
+  }
+
+  const origin = `${location.protocol}//${AIAF_SUBDOMAIN_PREFIX}${apexHostname(location.hostname)}${
+    location.port ? `:${location.port}` : ""
+  }`;
+  return `${origin}/`;
 }
