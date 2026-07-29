@@ -3,30 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { Mail, Clock } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
-import emailjs from '@emailjs/browser';
+import { Turnstile } from "./Turnstile";
+import { submitContactForm } from "../lib/contact";
 
 const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    details: "info@codensecurity.com",
+    details: "consulting@codensecurity.com",
     description: "Send us an email anytime"
   },
-  // {
-  //   icon: Phone,
-  //   title: "Call Us",
-  //   details: "+1 (555) 123-4567",
-  //   description: "Mon-Fri 9am-6pm EST"
-  // },
-  // {
-  //   icon: MapPin,
-  //   title: "Visit Us",
-  //   details: "123 Business Ave, Tech City, TC 12345",
-  //   description: "Our headquarters"
-  // },
   {
     icon: Clock,
     title: "Business Hours",
@@ -47,14 +37,7 @@ export function Contact() {
     privacy: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Initialize EmailJS
-  useEffect(() => {
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-    if (publicKey) {
-      emailjs.init(publicKey);
-    }
-  }, []);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value, type } = e.target;
@@ -68,44 +51,31 @@ export function Contact() {
     setFormData(prev => ({ ...prev, service: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.message || !formData.privacy) {
       toast.error('Please fill in all required fields and accept the privacy policy.');
       return;
     }
 
+    const formElement = e.currentTarget;
+    const formDataToSend = new FormData(formElement);
+    const token = formDataToSend.get('cf-turnstile-response');
+
+    if (!token) {
+      toast.error('Please complete the CAPTCHA verification.');
+      return;
+    }
+
     setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: '' });
 
     try {
-      // Method 1: Try EmailJS if configured
-      const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const templateID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+      const result = await submitContactForm(formDataToSend);
 
-      console.log('EmailJS Config:', { serviceID, templateID, publicKey: publicKey ? 'Set' : 'Not set' });
-
-      if (serviceID && templateID && publicKey) {
-        const templateParams = {
-          to_email: 'info@codensecurity.com',
-          from_name: `${formData.firstName} ${formData.lastName}`,
-          from_email: formData.email,
-          phone: formData.phone || 'Not provided',
-          company: formData.company || 'Not provided',
-          service: formData.service || 'Not specified',
-          message: formData.message,
-          reply_to: formData.email
-        };
-
-        console.log('Sending email with params:', templateParams);
-        
-        const result = await emailjs.send(serviceID, templateID, templateParams, publicKey);
-        console.log('EmailJS result:', result);
-        
-        toast.success('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.');
-        
-        // Clear form on success
+      if (result.ok && result.mode === "api") {
+        setSubmitStatus({ type: 'success', message: 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.' });
         setFormData({
           firstName: '',
           lastName: '',
@@ -116,68 +86,17 @@ export function Contact() {
           message: '',
           privacy: false
         });
-        
-        return; // Exit successfully
-      } else {
-        console.log('EmailJS not configured, trying backend API...');
-        // Method 2: Try backend API if available
-        const apiUrl = import.meta.env.VITE_API_URL || '/api';
-        
-        const emailData = {
-          to: 'info@codensecurity.com',
-          subject: `Contact Form Submission from ${formData.firstName} ${formData.lastName}`,
-          html: `
-            <h3>New Contact Form Submission</h3>
-            <p><strong>Name:</strong> ${formData.firstName} ${formData.lastName}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
-            <p><strong>Phone:</strong> ${formData.phone || 'Not provided'}</p>
-            <p><strong>Company:</strong> ${formData.company || 'Not provided'}</p>
-            <p><strong>Service Interest:</strong> ${formData.service || 'Not specified'}</p>
-            <h4>Message:</h4>
-            <p>${formData.message.replace(/\n/g, '<br>')}</p>
-            <hr>
-            <p><em>This message was sent from the FortiSight contact form.</em></p>
-          `,
-          replyTo: formData.email
-        };
-
-        const response = await fetch(`${apiUrl}/send-email`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(emailData)
+      } else if (result.ok && result.mode === "mailto") {
+        setSubmitStatus({
+          type: "success",
+          message: "Your default email app was opened with a prepared draft because direct submission is temporarily unavailable.",
         });
-
-        if (!response.ok) {
-          throw new Error('Backend API not available');
-        }
-
-        toast.success('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.');
-      }
-
-      // Clear form on success
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: '',
-        privacy: false
-      });
-
-    } catch (error) {
-      console.error('Error sending email:', error);
-      
-      // If EmailJS failed, show specific error
-      if (error && typeof error === 'object' && 'text' in error) {
-        console.error('EmailJS Error:', error);
-        toast.error(`Failed to send email: ${error.text || 'Unknown EmailJS error'}`);
       } else {
-        toast.error('Failed to send email. Please try again or contact us directly.');
+        setSubmitStatus({ type: 'error', message: result.message });
       }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -191,11 +110,11 @@ export function Contact() {
             <span className="text-sm text-primary">Contact Us</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold">
-            Ready to Transform Your Business?
+            Ready to Secure Your Business?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Get in touch with our experts to discuss your IT needs and discover how 
-            we can help accelerate your digital transformation journey.
+            Get in touch with our experts to discuss your Cybersecurity needs and discover how 
+            we can help mitigate security risks for your business.
           </p>
         </div>
 
@@ -207,133 +126,151 @@ export function Contact() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <form onSubmit={handleSubmit}>
+                  {submitStatus.type && (
+                    <Alert variant={submitStatus.type === 'error' ? 'destructive' : 'default'}>
+                      <AlertTitle>{submitStatus.type === 'success' ? 'Message sent' : 'Submission failed'}</AlertTitle>
+                      <AlertDescription>{submitStatus.message}</AlertDescription>
+                    </Alert>
+                  )}
+
                   <div className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label htmlFor="firstName" className="text-sm font-medium">
+                            First Name *
+                          </label>
+                          <Input 
+                            id="firstName" 
+                            name="firstName"
+                            placeholder="John" 
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label htmlFor="lastName" className="text-sm font-medium">
+                            Last Name *
+                          </label>
+                          <Input 
+                            id="lastName" 
+                            name="lastName"
+                            placeholder="Doe" 
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label htmlFor="email" className="text-sm font-medium">
+                            Email Address *
+                          </label>
+                          <Input 
+                            id="email" 
+                            name="email"
+                            type="email" 
+                            placeholder="john@company.com" 
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label htmlFor="phone" className="text-sm font-medium">
+                            Phone Number
+                          </label>
+                          <Input 
+                            id="phone" 
+                            name="phone"
+                            type="tel" 
+                            placeholder="+1 (555) 123-4567" 
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label htmlFor="company" className="text-sm font-medium">
+                            Company Name
+                          </label>
+                          <Input 
+                            id="company" 
+                            name="company"
+                            placeholder="Your Company" 
+                            value={formData.company}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label htmlFor="service" className="text-sm font-medium">
+                            Service Interest
+                          </label>
+                          <Select value={formData.service} onValueChange={handleSelectChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a service" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="assessment">Security Assessment</SelectItem>
+                              <SelectItem value="email">Email Protection Setup</SelectItem>
+                              <SelectItem value="website">Website Security Hardening</SelectItem>
+                              <SelectItem value="domain">Domain & DNS Security</SelectItem>
+                              <SelectItem value="training">Security Awareness Training</SelectItem>
+                              <SelectItem value="incident">Incident Response Support</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <input type="hidden" name="service" value={formData.service} />
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
-                        <label htmlFor="firstName" className="text-sm font-medium">
-                          First Name *
+                        <label htmlFor="message" className="text-sm font-medium">
+                          Message *
                         </label>
-                        <Input 
-                          id="firstName" 
-                          placeholder="John" 
-                          value={formData.firstName}
+                        <Textarea 
+                          id="message" 
+                          name="message"
+                          placeholder="Tell us about your cybersecurity needs..."
+                          rows={4}
+                          value={formData.message}
                           onChange={handleInputChange}
                           required
                         />
                       </div>
-                      <div className="space-y-2">
-                        <label htmlFor="lastName" className="text-sm font-medium">
-                          Last Name *
-                        </label>
-                        <Input 
-                          id="lastName" 
-                          placeholder="Doe" 
-                          value={formData.lastName}
+
+                      <div className="flex items-start space-x-2">
+                        <input 
+                          type="checkbox" 
+                          id="privacy" 
+                          name="privacy"
+                          className="mt-1" 
+                          checked={formData.privacy}
                           onChange={handleInputChange}
                           required
                         />
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label htmlFor="email" className="text-sm font-medium">
-                          Email Address *
+                        <label htmlFor="privacy" className="text-sm text-muted-foreground">
+                          I agree to the privacy policy and terms of service.
                         </label>
-                        <Input 
-                          id="email" 
-                          type="email" 
-                          placeholder="john@company.com" 
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                        />
                       </div>
+
                       <div className="space-y-2">
-                        <label htmlFor="phone" className="text-sm font-medium">
-                          Phone Number
-                        </label>
-                        <Input 
-                          id="phone" 
-                          type="tel" 
-                          placeholder="+1 (555) 123-4567" 
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                        />
+                        <Turnstile action="contact" />
                       </div>
-                    </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label htmlFor="company" className="text-sm font-medium">
-                          Company Name
-                        </label>
-                        <Input 
-                          id="company" 
-                          placeholder="Your Company" 
-                          value={formData.company}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="service" className="text-sm font-medium">
-                          Service Interest
-                        </label>
-                        <Select value={formData.service} onValueChange={handleSelectChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a service" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="cloud">Cloud Migration</SelectItem>
-                            <SelectItem value="security">Cybersecurity</SelectItem>
-                            <SelectItem value="ai">AI & Machine Learning</SelectItem>
-                            <SelectItem value="analytics">Data Analytics</SelectItem>
-                            <SelectItem value="software">Software Development</SelectItem>
-                            <SelectItem value="digital">Digital Transformation</SelectItem>
-                            <SelectItem value="consulting">IT Consulting</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <Button 
+                        type="submit" 
+                        size="lg" 
+                        className="w-full md:w-auto" 
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                      </Button>
                     </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="message" className="text-sm font-medium">
-                        Message *
-                      </label>
-                      <Textarea 
-                        id="message" 
-                        placeholder="Tell us about your project requirements..."
-                        rows={4}
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="flex items-start space-x-2">
-                      <input 
-                        type="checkbox" 
-                        id="privacy" 
-                        className="mt-1" 
-                        checked={formData.privacy}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <label htmlFor="privacy" className="text-sm text-muted-foreground">
-                        I agree to the privacy policy and terms of service. *
-                      </label>
-                    </div>
-
-                    <Button 
-                      type="submit" 
-                      size="lg" 
-                      className="w-full md:w-auto" 
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
-                    </Button>
-                  </div>
-                </form>
+                  </form>
               </CardContent>
             </Card>
           </div>
@@ -357,7 +294,7 @@ export function Contact() {
             <Card className="p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-2">Get a Free Consultation</h3>
               <p className="text-sm mb-4 opacity-90">
-                Schedule a 30-minute call with our experts to discuss your IT challenges and opportunities.
+                Schedule a 30-minute call with our experts to discuss your Cybersecurity challenges.
               </p>
               <Button 
                 variant="secondary" 

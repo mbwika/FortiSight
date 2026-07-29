@@ -14,14 +14,13 @@ export function Logo({ className = "" }: { className?: string }) {
       <div className="w-10 h-10">
         <img 
           src={logoImage} 
-          alt="FortiSight Consulting Logo" 
+          alt="Codensecurity Logo" 
           className="w-full h-full object-contain"
         />
       </div>
       <div className="flex flex-col">
-        <span className="text-lg font-bold leading-tight">FortiSight</span>
-        <span className="text-xs text-muted-foreground leading-tight tracking-wide">CONSULTING</span>
-        <span className="text-xs leading-tight tracking-wide italic">Fortifying with Insight</span>
+        <span className="text-lg font-bold leading-tight">Code & Security Consulting</span>
+        <span className="text-xs leading-tight tracking-wide italic">Identifying and Mitigating Cybersecurity Risk</span>
       </div>
     </a>
   );
@@ -38,14 +37,13 @@ export function LogoCompact({ className = "" }: { className?: string }) {
       <div className="w-8 h-8">
         <img 
           src={logoImage} 
-          alt="FortiSight Consulting Logo" 
+          alt="Codensecurity Logo" 
           className="w-full h-full object-contain"
         />
       </div>
       <div className="flex flex-col">
-        <span className="text-base font-bold leading-tight">FortiSight</span>
-        <span className="text-xs text-muted-foreground leading-tight tracking-wide">CONSULTING</span>
-        <span className="text-xs text-muted-foreground leading-tight tracking-wide italic">Fortifying with Insight</span>
+        <span className="text-base font-bold leading-tight">Code & Security Consulting</span>
+        <span className="text-xs text-muted-foreground leading-tight tracking-wide italic">Identifying and Mitigating Cybersecurity Risk</span>
       </div>
     </a>
   );

@@ -1,15 +1,16 @@
 import { Separator } from "./ui/separator";
 import { Linkedin, Twitter, Facebook, Youtube } from "lucide-react";
 import { Logo } from "./Logo";
+import type { View } from "../lib/view";
 
 const footerLinks = {
   Services: [
-    "Cloud Migration & Digital Transformation",
-    "Cybersecurity",
-    "AI & Machine Learning",
-    "Data Analytics",
-    "Software Development",
-    "IT Consulting"
+    "Security Assessment",
+    "Email Protection Setup",
+    "Website Security Hardening",
+    "Domain & DNS Security",
+    "Security Awareness Training",
+    "Incident Response Support"
   ],
   Company: [
     "About Us",
@@ -29,7 +30,12 @@ const footerLinks = {
   ]
 };
 
-export function Footer() {
+type FooterProps = {
+  activeView: View;
+  onNavigate: (target: string) => void;
+};
+
+export function Footer({ activeView, onNavigate }: FooterProps) {
   return (
     <footer className="bg-muted/30 pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -37,9 +43,8 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Logo />
             <p className="text-muted-foreground leading-relaxed max-w-md">
-              FortiSight Consulting provides strategic IT consulting, software development, 
-              and comprehensive technology solutions. We help businesses gain clarity and 
-              foresight in their digital transformation journey since 2016.
+              Code & Security provides practical cybersecurity checks and solutions for small businesses. 
+              We identify and fix common security risks without unnecessary complexity, helping you protect your business from cyber threats.
             </p>
             <div className="flex space-x-4">
               <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
@@ -80,7 +85,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © 2025 FortiSight Consulting. All rights reserved.
+            © 2026 Code & Security Consulting. All rights reserved.
           </div>
           <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
@@ -95,7 +100,13 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t text-center">
           <p className="text-sm text-muted-foreground">
             Ready to transform your business? 
-            <a href="#contact" className="text-primary hover:underline ml-1">Get started today</a>
+            <button
+              type="button"
+              onClick={() => onNavigate(activeView === "aiaf" ? "aiaf-pilot" : "contact")}
+              className="text-primary hover:underline ml-1"
+            >
+              Get started today
+            </button>
           </p>
         </div>
       </div>
