@@ -1,6 +1,7 @@
 const TEXT_RESPONSE_HEADERS = {
   "Content-Type": "text/plain; charset=utf-8",
 };
+const AIAF_HOSTNAME = "aiaf.codensecurity.com";
 
 function getField(body, field) {
   if (body && typeof body.get === "function") {
@@ -163,10 +164,6 @@ function isStaticAssetPath(pathname) {
   return /\.[a-z0-9]+$/i.test(pathname);
 }
 
-function apexHostname(hostname) {
-  return hostname.startsWith('www.') ? hostname.slice(4) : hostname;
-}
-
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -191,14 +188,25 @@ export default {
       return new Response('Not found', { status: 404 });
     }
 
-    const isAiafSubdomain = url.hostname.startsWith('aiaf.');
-    const isAiafPath = url.pathname === '/aiaf' || url.pathname === '/aiaf/';
+    const isAiafSubdomain = url.hostname === AIAF_HOSTNAME;
+    const isAiafPath = url.pathname === '/aiaf' || url.pathname === '/aiaf/' || url.pathname === '/aiaf.html';
 
     if ((request.method === 'GET' || request.method === 'HEAD') && !isAiafSubdomain && isAiafPath) {
       const redirectUrl = new URL(request.url);
-      redirectUrl.hostname = `aiaf.${apexHostname(url.hostname)}`;
+      redirectUrl.hostname = AIAF_HOSTNAME;
       redirectUrl.pathname = '/';
       return Response.redirect(redirectUrl.toString(), 301);
+    }
+
+    if (
+      (request.method === 'GET' || request.method === 'HEAD') &&
+      isAiafSubdomain &&
+      (url.pathname === '/index.html' || url.pathname === '/aiaf.html')
+    ) {
+      const aiafUrl = new URL(request.url);
+      aiafUrl.pathname = '/aiaf.html';
+      aiafUrl.search = '';
+      return env.ASSETS.fetch(new Request(aiafUrl, request));
     }
 
     const shouldServeAiafShell =

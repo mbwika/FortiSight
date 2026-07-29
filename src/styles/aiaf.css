@@ -98,7 +98,7 @@
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 2rem;
   box-shadow: 0 28px 90px rgba(2, 6, 23, 0.28);
-  min-height: 38rem;
+  min-height: 44.5rem;
   overflow: hidden;
   padding: 2rem;
   position: relative;
@@ -351,7 +351,7 @@
 
 @media (max-width: 39.9375rem) {
   .aiaf-motion-stage {
-    min-height: 34rem;
+    min-height: 39.8rem;
     padding: 1rem;
   }
 

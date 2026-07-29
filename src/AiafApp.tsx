@@ -25,7 +25,7 @@ export default function AiafApp() {
     <ThemeProvider defaultTheme="light">
       <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
         <AiafHeader
-          onBackHome={() => navigate("home")}
+          onOpenVanguard={() => window.open("https://vanguard.codensecurity.com", "_blank", "noopener,noreferrer")}
           onRequestDemo={() => navigate("aiaf-pilot")}
         />
         <main>

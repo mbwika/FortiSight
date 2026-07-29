@@ -2,7 +2,13 @@
 import logoImage from "../assets/code-n-security.png";
 
 
-export function Logo({ className = "" }: { className?: string }) {
+export function Logo({
+  className = "",
+  showTagline = true,
+}: {
+  className?: string;
+  showTagline?: boolean;
+}) {
   return (
     <a 
       href="https://codensecurity.com" 
@@ -17,16 +23,24 @@ export function Logo({ className = "" }: { className?: string }) {
           className="h-full w-full scale-125 object-cover object-center"
         />
       </div>
-      <div className="flex flex-col">
-        <span className="text-xs font-semibold leading-tight tracking-wide text-slate-950 dark:text-white">
-          Identifying and Mitigating Cybersecurity Risk
-        </span>
-      </div>
+      {showTagline && (
+        <div className="flex flex-col">
+          <span className="text-xs font-semibold leading-tight tracking-wide text-slate-950 dark:text-white">
+            Identifying and Mitigating Cybersecurity Risk
+          </span>
+        </div>
+      )}
     </a>
   );
 }
 
-export function LogoCompact({ className = "" }: { className?: string }) {
+export function LogoCompact({
+  className = "",
+  showTagline = true,
+}: {
+  className?: string;
+  showTagline?: boolean;
+}) {
   return (
     <a 
       href="https://codensecurity.com" 
@@ -41,11 +55,13 @@ export function LogoCompact({ className = "" }: { className?: string }) {
           className="h-full w-full scale-125 object-cover object-center"
         />
       </div>
-      <div className="flex flex-col">
-        <span className="text-xs font-semibold leading-tight tracking-wide text-slate-950 dark:text-white">
-          Identifying and Mitigating Cybersecurity Risk
-        </span>
-      </div>
+      {showTagline && (
+        <div className="flex flex-col">
+          <span className="text-xs font-semibold leading-tight tracking-wide text-slate-950 dark:text-white">
+            Identifying and Mitigating Cybersecurity Risk
+          </span>
+        </div>
+      )}
     </a>
   );
 }

@@ -143,7 +143,7 @@ const packages = [
     summary: "Open assurance and evidence layer for first scans, signed evidence, security testing, governance reporting, and production use.",
     features: [
       {
-        title: "Model And Supply Chain",
+        title: "Model and Supply Chain",
         details: [
           "External model intake with graded adoption verdicts.",
           "CycloneDX ML-BOM export and import.",
@@ -154,7 +154,7 @@ const packages = [
         ],
       },
       {
-        title: "Red-Team And Runtime Security",
+        title: "Red-Team and Runtime Security",
         details: [
           "Full red-team evaluation with garak and PyRIT.",
           "Live behavioral probing at intake time.",
@@ -165,7 +165,7 @@ const packages = [
         ],
       },
       {
-        title: "Trust And Governance",
+        title: "Trust and Governance",
         details: [
           "Bias and fairness assessment.",
           "Hallucination and factual-reliability risk assessment.",
@@ -176,7 +176,7 @@ const packages = [
         ],
       },
       {
-        title: "Operate And Report",
+        title: "Operate and Report",
         details: [
           "Scheduled continuous security operations.",
           "SIEM and OSCAL export.",
@@ -194,12 +194,12 @@ const packages = [
     audience: "Professional self-hosted deployment",
     logo: vanguardLogo,
     accent: "vanguard",
-    cta: "Launch Vanguard",
-    action: "vanguard",
+    cta: "Order Vanguard",
+    action: "interest",
     summary: "Self-hosted professional control plane for identity, isolation, automation, workflow integration, policy gates, evidence custody, and governance delivery.",
     features: [
       {
-        title: "Identity And Access",
+        title: "Identity and Access",
         details: [
           "Hardened OIDC/SSO with issuer-locked discovery.",
           "Algorithm allowlisting and replay protection.",
@@ -209,7 +209,7 @@ const packages = [
         ],
       },
       {
-        title: "Workspaces And Isolation",
+        title: "Workspaces and Isolation",
         details: [
           "Workspace membership with request-time resolution.",
           "Workspace-scoped access across the Sentry data model.",
@@ -236,7 +236,7 @@ const packages = [
         ],
       },
       {
-        title: "Policy, Evidence, And Deliverables",
+        title: "Policy, Evidence, and Deliverables",
         details: [
           "Policy-as-code gates with signed verdicts for CI, REST, and Kubernetes admission.",
           "Hash-chained, tamper-evident audit trail with offline verification.",
@@ -256,11 +256,11 @@ const packages = [
   },
   {
     name: "AIAF Aegis",
-    status: "Pre-Order",
+    status: "Preorder",
     audience: "Enterprise AI governance operations",
     logo: aegisLogo,
     accent: "aegis",
-    cta: "Pre-Order Aegis",
+    cta: "Preorder Aegis",
     action: "interest",
     summary: "Enterprise enforcement layer for organizations that need low-latency policy decisions directly in the AI request path.",
     features: [
@@ -281,7 +281,7 @@ const packages = [
         ],
       },
       {
-        title: "Enterprise Identity And Procurement",
+        title: "Enterprise Identity and Procurement",
         details: [
           "Planned SAML support for long-tail enterprise identity providers.",
           "Dedicated SLA posture.",
@@ -303,7 +303,7 @@ const packages = [
 const standards = [
   "NIST AI RMF",
   "NIST SSDF",
-  "OWASP Top 10 For LLM Apps",
+  "OWASP Top 10 for LLM Apps",
   "MITRE ATLAS",
   "CIS Controls v8",
   "EU AI Act",
@@ -314,7 +314,7 @@ type PackageAction = "github" | "vanguard" | "interest";
 
 export function AIAF() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState("AIAF Vanguard demo request");
+  const [selectedPackage, setSelectedPackage] = useState("Vanguard Demo");
   const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error" | null; message: string }>({ type: null, message: "" });
 
   const scrollToForm = (interest: string) => {
@@ -335,7 +335,7 @@ export function AIAF() {
       return;
     }
 
-    scrollToForm(`${name} pre-order interest`);
+    scrollToForm(name === "AIAF Aegis" ? "Aegis Preorder" : "Vanguard Order");
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -394,7 +394,7 @@ export function AIAF() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" className="group" onClick={() => scrollToForm("AIAF Vanguard demo request")}>
+              <Button size="lg" className="group" onClick={() => scrollToForm("Vanguard Demo")}>
                 Request a Demo
                 <ArrowRight className="transition-transform group-hover:translate-x-1" />
               </Button>
@@ -494,7 +494,7 @@ export function AIAF() {
 
           <div className="space-y-8">
             <div className="space-y-3 text-center">
-              <h2 className="aiaf-section-title">What Problems It Solves</h2>
+              <h2 className="aiaf-section-title">What Problems AIAF Solves</h2>
               <p className="aiaf-section-copy">Six gaps that today's AI security tools often leave open.</p>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -613,7 +613,7 @@ export function AIAF() {
 
           <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-white/10 dark:bg-slate-950">
             <div className="space-y-2">
-              <h2 className="aiaf-section-title">Standards And Framework Alignment</h2>
+              <h2 className="aiaf-section-title">Standards and Framework Alignment</h2>
               <p className="aiaf-section-copy">
                 AIAF maps evidence and controls back to the frameworks governance, security, and compliance reviewers cite.
               </p>
@@ -673,6 +673,24 @@ export function AIAF() {
 
                   <input type="hidden" name="service" value={selectedPackage} />
 
+                  <div className="space-y-2">
+                    <label htmlFor="aiaf-product" className="text-sm font-semibold text-slate-950 dark:text-white">
+                      Product Interest *
+                    </label>
+                    <select
+                      id="aiaf-product"
+                      name="productInterest"
+                      value={selectedPackage}
+                      onChange={(event) => setSelectedPackage(event.target.value)}
+                      required
+                      className="h-10 w-full rounded-md border border-input bg-input-background px-3 py-2 text-sm text-slate-950 outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 dark:text-white"
+                    >
+                      <option value="Vanguard Demo">Vanguard Demo</option>
+                      <option value="Vanguard Order">Vanguard Order</option>
+                      <option value="Aegis Preorder">Aegis Preorder</option>
+                    </select>
+                  </div>
+
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <label htmlFor="aiaf-firstName" className="text-sm font-semibold text-slate-950 dark:text-white">First Name *</label>
@@ -697,7 +715,7 @@ export function AIAF() {
 
                   <div className="space-y-2">
                     <label htmlFor="aiaf-message" className="text-sm font-semibold text-slate-950 dark:text-white">
-                      What AI Systems Do You Want to Assess? *
+                      What AI Systems Do You Want to Assess/Govern? *
                     </label>
                     <Textarea
                       id="aiaf-message"
